@@ -18,7 +18,7 @@ const port = 3000;
 app.use(cors())
 app.use(bodyParser.json())
 
-app.use("/api", mainRouter)
+app.use("/api/v1", mainRouter)
 
 app.listen(port, () => {
     console.log(`App running on http://localhost:${port}`);
