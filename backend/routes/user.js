@@ -31,9 +31,8 @@ router.post("/signup", async (req, res) => {
         // Check if the user already exists
         const isUser = await User.findOne({ email: details.email });
         if (isUser) {
-            return res.status(409).json({ error: "User already exists" });
+            return res.json({ error: "User already exists" });
         }
-        console.log('HI');
         const encrptedPassword = await bcrypt.hash(details.password, saltRounds)
         const newUser = {
             fullName: details.fullName,
@@ -43,12 +42,11 @@ router.post("/signup", async (req, res) => {
 
         const user = await User.create(newUser);
         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
-        return res.status(201).json({
+        return res.json({
             token,
-            message: "Registration Successful",
         });
     } catch (error) {
-        return res.status(500).json({ error: "Internal server error" });
+        return res.json({ error: "Internal server error" });
     }
 });
 
@@ -70,27 +68,26 @@ router.post("/signin", async (req, res) => {
             const token = jwt.sign({ userId: isUser._id }, process.env.JWT_SECRET);
             return res.status(201).json({
                 token,
-                message: "Login Successful "
             })
         } else {
-            return res.status(400).json({
-                error: "Invalid Credentials"
+            return res.json({
+                error: "Incorrect Password"
             })
         }
     } catch (error) {
-        return res.status(500).json({ error: "Internal server error" });
+        return res.json({ error: "Internal server error" });
     }
 });
 
 router.get("/get-user", authMiddleware, async (req, res) => {
     try {
         if (!req.userId) {
-            return res.status(401).json({ error: "Unauthorized access" });
+            return res.json({ error: "Unauthorized access" });
         }
         const isUser = await User.findOne({ _id: req.userId });
 
         if (!isUser) {
-            return res.status(404).json({ error: "User not found" });
+            return res.json({ error: "User not found" });
         }
 
         return res.json({
@@ -100,8 +97,7 @@ router.get("/get-user", authMiddleware, async (req, res) => {
             createdOn: isUser.createdOn
         });
     } catch (error) {
-        console.error("Error fetching user:", error);
-        return res.status(500).json({ error: "Internal server error" });
+        return res.json({ error: "Internal server error" });
     }
 });
 

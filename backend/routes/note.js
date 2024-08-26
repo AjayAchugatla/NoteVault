@@ -38,4 +38,17 @@ router.post('/', authMiddleware, async (req, res) => {
     }
 })
 
+router.get('/', authMiddleware, async (req, res) => {
+    try {
+        const notes = await Note.find({ userId: req.userId })
+        return res.json({
+            notes,
+        })
+    } catch (error) {
+        return res.status(500).json({
+            error: "Internal Server Error"
+        })
+    }
+})
+
 export default router
