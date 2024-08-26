@@ -31,7 +31,7 @@ router.post("/signup", async (req, res) => {
         // Check if the user already exists
         const isUser = await User.findOne({ email: details.email });
         if (isUser) {
-            return res.json({ error: "User already exists" });
+            return res.json({ error: "User already exists! Please Sign in" });
         }
         const encrptedPassword = await bcrypt.hash(details.password, saltRounds)
         const newUser = {
@@ -61,12 +61,12 @@ router.post("/signin", async (req, res) => {
     try {
         const isUser = await User.findOne({ email: details.email });
         if (!isUser) {
-            return res.status(409).json({ error: "User doesn't exist" });
+            return res.json({ error: "User doesn't exist" });
         }
         const passwordMatch = await bcrypt.compare(details.password, isUser.password);
         if (passwordMatch) {
             const token = jwt.sign({ userId: isUser._id }, process.env.JWT_SECRET);
-            return res.status(201).json({
+            return res.json({
                 token,
             })
         } else {

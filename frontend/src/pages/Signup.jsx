@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
 import Navbar from '../components/Navbar'
 import { Link, useNavigate } from 'react-router-dom'
-import PwdInput from '../components/PwdInput'
 import { validateEmail } from '../utils/fun'
 import axios from "axios"
+import Error from '../components/Error'
 
 function Signup() {
 
@@ -13,9 +13,17 @@ function Signup() {
     const [error, setError] = useState(null)
     const navigate = useNavigate()
 
-    const handleSignup = async (e) => {
-        e.preventDefault();
-
+    const handleSignup = async () => {
+        if (name === '') {
+            setError("Please enter the name");
+            return
+        } else if (email === '') {
+            setError("Please enter the email");
+            return
+        } else if (password === '') {
+            setError("Please enter the password");
+            return
+        }
         if (!validateEmail(email)) {
             setError("Please enter a valid email address ")
             return
@@ -28,72 +36,70 @@ function Signup() {
                 password: password,
             });
 
-            if (response.data && response.data.error) {
-                setError(response.data.message)
-                return
-            }
-
-            if (response.data && response.data.accessToken) {
-                localStorage.setItem("token", response.data.accessToken)
+            if (response.data.token) {
+                localStorage.setItem("token", response.data.token)
                 navigate("/dashboard");
+            } else {
+                setError(response.data.error)
             }
 
         } catch (error) {
-            if (error.response && error.response.data && error.response.data.message) {
-                setError(error.response.data.message);
-            }
-            else {
-                setError("An unexpected error occured. Please try Later")
-            }
+            setError("An unexpected error occured. Please try Later")
+        }
+    }
+
+    const getUser = async () => {
+        const token = localStorage.getItem("token");
+        if (token) {
+            const response = await axios.get(import.meta.env.VITE_BASE_URL + "/user/get-user", {
+                headers: {
+                    Authorization: "Bearer " + token
+                }
+            })
+            if (response.data._id)
+                navigate('/dashboard')
         }
     }
 
     useEffect(() => {
-        const token = localStorage.getItem("token");
-        if (token)
-            navigate("/dashboard");
+        getUser()
     }, [])
     return (
         <>
             <Navbar />
-            <div className='flex items-center justify-center mt-16'>
-                <div className='w-96 border rounded bg-white px-7 py-10 '>
-                    <form onSubmit={handleSignup}>
-                        <h4 className='text-2xl mb-7'>Signup</h4>
-                        <input
-                            type="text"
-                            placeholder='Name'
-                            className='input-box'
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                        />
-                        <input
-                            type="text"
-                            placeholder='Email'
-                            className='input-box'
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                        />
-                        <input
-                            type="password"
-                            placeholder='Password'
-                            className='input-box'
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                        />
+            <div className='flex items-center justify-center mt-16 px-2'>
+                <div className='w-96 border rounded bg-white px-8 py-8'>
+                    <h4 className='text-center text-2xl mb-7'>Signup</h4>
+                    <input
+                        type="text"
+                        placeholder='Name'
+                        className='input-box'
+                        onChange={(e) => setName(e.target.value)}
+                    />
+                    <input
+                        type="text"
+                        placeholder='Email'
+                        className='input-box'
+                        onChange={(e) => setEmail(e.target.value)}
+                    />
+                    <input
+                        type="password"
+                        placeholder='Password'
+                        className='input-box'
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
 
-                        {error && <p className='text-red-500 text-xs pb-1'>{error}</p>}
+                    <Error error={error} />
 
-                        <button type='submit' className='btn-primary'>
-                            Create Account
-                        </button>
-                        <p className='text-sm text-center mt-4'>
-                            Already have an account?{" "}
-                            <Link to='/signin' className='font-medium underline text-primary'>
-                                Login
-                            </Link>
-                        </p>
-                    </form>
+                    <button onClick={handleSignup} className='btn-primary'>
+                        Create Account
+                    </button>
+                    <p className='text-sm text-center mt-4'>
+                        Already have an account?{" "}
+                        <Link to='/signin' className='font-medium underline text-primary'>
+                            Login
+                        </Link>
+                    </p>
                 </div>
             </div>
         </>
