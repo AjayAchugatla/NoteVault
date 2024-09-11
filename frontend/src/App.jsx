@@ -6,7 +6,7 @@ import Signin from './pages/Signin.jsx'
 import Signup from './pages/Signup.jsx'
 import AddNotes from './pages/AddNotes.jsx'
 import First from './pages/First.jsx'
-import ViewNote from './pages/ViewNote.jsx'
+
 
 function App() {
   return (
@@ -18,7 +18,7 @@ function App() {
           <Route path='/signin' element={<Signin />}></Route>
           <Route path='/signup' element={<Signup />}></Route>
           <Route path='/add' element={<AddNotes />}></Route>
-          <Route path='/view' element={<ViewNote />}></Route>
+
         </Routes >
       </BrowserRouter>
     </>
