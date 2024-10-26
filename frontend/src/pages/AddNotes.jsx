@@ -26,7 +26,6 @@ function AddNotes() {
             })
 
             if (resp.data.message) {
-                // showToastMsg("Node Added Successfully")
                 navigate('/dashboard')
             } else {
                 setError(resp.data.error)
@@ -57,7 +56,7 @@ function AddNotes() {
                     <label className='input-label'>TITLE</label>
                     <input
                         type="text"
-                        className={`text-l text-slate-950 input-box`}
+                        className={`text-lg text-slate-950 input-box`}
                         onChange={(e) => setTitle(e.target.value)}
                     />
                 </div>

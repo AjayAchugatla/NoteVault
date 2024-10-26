@@ -20,10 +20,10 @@ function NoteCard({
                     <h6 className='text-sm font-medium'>{title}</h6>
                     <span className="text-xs text-slate-500">{moment(date).format('Do MMM YYYY')}</span>
                 </div>
-                {/* <MdOutlinePushPin
+                <MdOutlinePushPin
                     className={`icon-btn ${isPinned ? 'text-primary' : 'text-slate-300 '}`}
                     onClick={onPinNode}
-                /> */}
+                />
             </div>
             <p className='text-xs text-slate-600 mt-2 '>{content?.slice(0, 60)}</p>
             <div className='flex  items-center justify-between mt-2'>
@@ -31,18 +31,18 @@ function NoteCard({
                     `#${tag} `
                 ))}</div>
                 <div className="flex items-center gap-2 mt-2">
-                    {/* <MdCreate
+                    <MdCreate
                         className='icon-btn hover:text-green-600'
                         onClick={onEdit}
-                    /> */}
+                    />
                     <MdDelete
                         className='icon-btn hover:text-red-500'
                         onClick={onDelete}
                     />
-                    {/* <MdOutlineOpenInFull
+                    <MdOutlineOpenInFull
                         className='icon-btn hover:text-blue-500'
                         onClick={onView}
-                    /> */}
+                    />
                 </div>
             </div>
         </div>

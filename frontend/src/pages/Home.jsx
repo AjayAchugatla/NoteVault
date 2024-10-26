@@ -15,6 +15,7 @@ function Home() {
     const [_, setUserInfo] = useRecoilState(userAtom);
     const [noteInfo, setNoteInfo] = useRecoilState(noteAtom);
     const [allNotes, setAllNotes] = useState([])
+
     const getUser = async () => {
         const token = localStorage.getItem("token");
         if (token) {
@@ -56,12 +57,31 @@ function Home() {
                 }
             })
             if (resp.data.message) {
-                // showToastMsg("Node Deleted Successfully", 'delete')
                 getAllNotes();
-                // onClose();
+
             }
         } catch (error) {
             console.log("An unexpected error occurred. Please try again.");
+        }
+    }
+
+    const updateIsPinned = async (noteData) => {
+        try {
+            const noteId = noteData._id
+            const resp = await axios.put(import.meta.env.VITE_BASE_URL + '/note/pin/' + noteId, {
+                "isPinned": !noteData.isPinned
+            }, {
+                headers: {
+                    Authorization: "Bearer " + localStorage.getItem("token")
+                }
+            })
+            console.log(resp.data);
+
+            if (resp.data.message) {
+                getAllNotes();
+            }
+        } catch (error) {
+            console.log(error);
         }
     }
 
@@ -84,17 +104,15 @@ function Home() {
                                 content={item.content}
                                 tags={item.tags}
                                 isPinned={item.isPinned}
-                                onEdit={() => { }}
+                                onEdit={() => {
+                                    setNoteInfo(item);
+                                    navigate(`/edit/${item._id}`)
+                                }}
                                 onDelete={() => { deleteNote(item) }}
                                 onPinNode={() => updateIsPinned(item)}
                                 onView={async () => {
-                                    const resp = await axios.get(import.meta.env.VITE_BASE_URL + "/note/" + item._id, {
-                                        headers: {
-                                            Authorization: "Bearer " + localStorage.getItem("token")
-                                        }
-                                    })
-                                    setNoteInfo(resp.data.note)
-                                    navigate(`/view`)
+                                    setNoteInfo(item)
+                                    navigate(`/note/${item._id}`)
                                 }}
                             />
                         ))}
