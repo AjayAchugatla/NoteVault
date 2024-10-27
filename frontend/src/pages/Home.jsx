@@ -8,6 +8,8 @@ import { userAtom } from "../recoil/atoms/userAtom"
 import { noteAtom } from "../recoil/atoms/noteAtom"
 import EmptyCard from '../components/EmptyCard'
 import AddBtn from '../components/AddBtn';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function Home() {
 
@@ -58,7 +60,7 @@ function Home() {
             })
             if (resp.data.message) {
                 getAllNotes();
-
+                toast.error("Note Deleted Successfully");
             }
         } catch (error) {
             console.log("An unexpected error occurred. Please try again.");
@@ -75,9 +77,8 @@ function Home() {
                     Authorization: "Bearer " + localStorage.getItem("token")
                 }
             })
-            console.log(resp.data);
-
             if (resp.data.message) {
+                toast(!noteData.isPinned ? 'Note Pinned Successfully' : 'Note Unpinned Successfully')
                 getAllNotes();
             }
         } catch (error) {
@@ -93,6 +94,19 @@ function Home() {
     return (
         <>
             <Navbar />
+            <ToastContainer
+                position="top-right"
+                autoClose={2000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"
+                transition:Bounce
+            />
             <div className="mr-7 mb-8">
                 {allNotes.length > 0 ?
                     <div className='grid grid-cols-1 gap-2 mt-8 lg:grid-cols-4'>

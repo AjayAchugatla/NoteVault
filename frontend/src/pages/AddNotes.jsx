@@ -3,6 +3,9 @@ import TagInput from '../components/TagInput'
 import axios from "axios"
 import Error from "../components/Error"
 import { useNavigate } from 'react-router-dom'
+import { IoIosClose } from "react-icons/io";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function AddNotes() {
 
@@ -12,6 +15,9 @@ function AddNotes() {
     const [tags, setTags] = useState([])
     const [error, setError] = useState(null)
 
+    const closeNote = () => {
+        navigate('/dashboard')
+    }
 
     const addNewNote = async () => {
         try {
@@ -24,9 +30,9 @@ function AddNotes() {
                     Authorization: "Bearer " + localStorage.getItem("token")
                 }
             })
-
             if (resp.data.message) {
-                navigate('/dashboard')
+                toast.success('Note added successfully')
+                new Promise(() => { setTimeout(() => { navigate('/dashboard') }, 2000) })
             } else {
                 setError(resp.data.error)
             }
@@ -51,7 +57,21 @@ function AddNotes() {
 
     return (
         <div className='flex justify-center items-center h-screen px-2'>
+            <ToastContainer
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"
+                transition:Bounce
+            />
             <div className='border w-full sm:w-96 px-4 flex justify-center flex-col'>
+                <IoIosClose onClick={closeNote} className=' text-5xl cursor-pointer relative mt-3 left-[300px] md:ml-6 md:left-72' />
                 <div className='flex flex-col gap-2 mt-5'>
                     <label className='input-label'>TITLE</label>
                     <input
