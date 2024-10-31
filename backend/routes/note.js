@@ -72,7 +72,28 @@ router.put('/:noteId', authMiddleware, async (req, res) => {
     }
 })
 
-router.get('/:id', authMiddleware, async (req, res) => {
+router.get('/search/:query', authMiddleware, async (req, res) => {
+    try {
+        const query = req.params.query
+        const notes = await Note.find({
+            userId: req.userId,
+            $or: [
+                { title: { $regex: new RegExp(query, "i") } },
+                { content: { $regex: new RegExp(query, "i") } },
+                { tags: { $regex: new RegExp(query, "i") } },
+            ],
+        })
+        return res.json({
+            notes
+        })
+    } catch (error) {
+        return res.json({
+            error: "Error1"
+        })
+    }
+})
+
+router.get('/getNote/:id', authMiddleware, async (req, res) => {
     const id = req.params.id
     try {
         const note = await Note.find({ _id: id })
@@ -123,6 +144,7 @@ router.put('/pin/:noteId', authMiddleware, async (req, res) => {
         });
     }
 })
+
 
 
 

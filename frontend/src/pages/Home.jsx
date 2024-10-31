@@ -10,6 +10,7 @@ import EmptyCard from '../components/EmptyCard'
 import AddBtn from '../components/AddBtn';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import NoData from '../components/NoData';
 
 function Home() {
 
@@ -17,6 +18,7 @@ function Home() {
     const [_, setUserInfo] = useRecoilState(userAtom);
     const [noteInfo, setNoteInfo] = useRecoilState(noteAtom);
     const [allNotes, setAllNotes] = useState([])
+    const [notFound, setNotFound] = useState(false)
 
     const getUser = async () => {
         const token = localStorage.getItem("token");
@@ -34,6 +36,26 @@ function Home() {
         } else {
             navigate('/signin')
         }
+    }
+
+    const getSearchNotes = async (search) => {
+        const resp = await axios.get(import.meta.env.VITE_BASE_URL + "/note/search/" + search, {
+            headers: {
+                Authorization: "Bearer " + localStorage.getItem("token")
+            }
+        })
+        if (resp.data.notes) {
+            setNotFound(false)
+            if (resp.data.notes.length > 0)
+                setAllNotes(resp.data.notes)
+            else
+                setNotFound(true)
+        }
+    }
+
+    const clearSearch = () => {
+        setNotFound(false)
+        getAllNotes()
     }
 
     const getAllNotes = async () => {
@@ -93,7 +115,7 @@ function Home() {
 
     return (
         <>
-            <Navbar />
+            <Navbar getSearchNotes={getSearchNotes} clearSearch={clearSearch} />
             <ToastContainer
                 position="top-right"
                 autoClose={2000}
@@ -107,7 +129,7 @@ function Home() {
                 theme="colored"
                 transition:Bounce
             />
-            <div className="mr-7 mb-8">
+            {notFound ? <NoData /> : <div className="mr-7 mb-8">
                 {allNotes.length > 0 ?
                     <div className='grid grid-cols-1 gap-2 mt-8 lg:grid-cols-4'>
                         {allNotes.map((item) => (
@@ -132,7 +154,7 @@ function Home() {
                         ))}
                     </div>
                     : <EmptyCard />}
-            </div>
+            </div>}
             <AddBtn onClick={() => {
                 navigate('/add')
             }} />
