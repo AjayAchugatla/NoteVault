@@ -4,7 +4,10 @@ import { Link, useNavigate } from 'react-router-dom'
 import { validateEmail } from '../utils/fun'
 import PwdInput from '../components/PwdInput'
 import axios from "axios"
+import { useRecoilState } from "recoil";
 import Error from '../components/Error'
+import Loader from '../components/Loader'
+import { loaderAtom } from "../recoil/atoms/loaderAtom"
 
 function Signup() {
 
@@ -12,6 +15,7 @@ function Signup() {
     const [password, setPassword] = useState("")
     const [name, setName] = useState("");
     const [error, setError] = useState(null)
+    const [loading, setLoading] = useRecoilState(loaderAtom)
     const navigate = useNavigate()
 
     const handleSignup = async () => {
@@ -50,6 +54,7 @@ function Signup() {
     }
 
     const getUser = async () => {
+        setLoading(true)
         const token = localStorage.getItem("token");
         if (token) {
             const response = await axios.get(import.meta.env.VITE_BASE_URL + "/user/get-user", {
@@ -60,49 +65,51 @@ function Signup() {
             if (response.data._id)
                 navigate('/dashboard')
         }
+        setLoading(false)
     }
 
     useEffect(() => {
         getUser()
     }, [])
     return (
-        <>
-            <Navbar />
-            <div className='flex items-center justify-center mt-16 px-2'>
-                <div className='w-96 border rounded bg-white px-8 py-8'>
-                    <h4 className='text-center text-2xl mb-7'>Signup</h4>
-                    <input
-                        type="text"
-                        placeholder='Name'
-                        className='input-box'
-                        onChange={(e) => setName(e.target.value)}
-                        autoFocus
-                    />
-                    <input
-                        type="text"
-                        placeholder='Email'
-                        className='input-box'
-                        onChange={(e) => setEmail(e.target.value)}
-                    />
-                    <PwdInput
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
+        loading ? <Loader /> :
+            <>
+                <Navbar />
+                <div className='flex items-center justify-center mt-16 px-2'>
+                    <div className='w-96 border rounded bg-white px-8 py-8'>
+                        <h4 className='text-center text-2xl mb-7'>Signup</h4>
+                        <input
+                            type="text"
+                            placeholder='Name'
+                            className='input-box'
+                            onChange={(e) => setName(e.target.value)}
+                            autoFocus
+                        />
+                        <input
+                            type="text"
+                            placeholder='Email'
+                            className='input-box'
+                            onChange={(e) => setEmail(e.target.value)}
+                        />
+                        <PwdInput
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
 
-                    <Error error={error} />
+                        <Error error={error} />
 
-                    <button onClick={handleSignup} className='btn-primary'>
-                        Create Account
-                    </button>
-                    <p className='text-sm text-center mt-4'>
-                        Already have an account?{" "}
-                        <Link to='/signin' className='font-medium underline text-primary'>
-                            Login
-                        </Link>
-                    </p>
+                        <button onClick={handleSignup} className='btn-primary'>
+                            Create Account
+                        </button>
+                        <p className='text-sm text-center mt-4'>
+                            Already have an account?{" "}
+                            <Link to='/signin' className='font-medium underline text-primary'>
+                                Login
+                            </Link>
+                        </p>
+                    </div>
                 </div>
-            </div>
-        </>
+            </>
 
     )
 }

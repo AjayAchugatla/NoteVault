@@ -4,14 +4,20 @@ import { Link, useNavigate } from 'react-router-dom'
 import { validateEmail } from '../utils/fun'
 import PwdInput from '../components/PwdInput'
 import axios from "axios"
+import { useRecoilState } from "recoil";
 import Error from '../components/Error'
+import Loader from "../components/Loader"
+import { loaderAtom } from "../recoil/atoms/loaderAtom"
 
 function Signin() {
 
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [error, setError] = useState(null)
+    const [loading, setLoading] = useRecoilState(loaderAtom)
+
     const navigate = useNavigate();
+
     const handleLogin = async () => {
         if (email === '') {
             setError("Please enter the email");
@@ -42,6 +48,7 @@ function Signin() {
     }
 
     const getUser = async () => {
+        setLoading(true)
         const token = localStorage.getItem("token");
         if (token) {
             const response = await axios.get(import.meta.env.VITE_BASE_URL + "/user/get-user", {
@@ -52,6 +59,7 @@ function Signin() {
             if (response.data._id)
                 navigate('/dashboard')
         }
+        setLoading(false)
     }
 
     useEffect(() => {
@@ -59,37 +67,38 @@ function Signin() {
     }, [])
 
     return (
-        <>
-            <Navbar />
-            <div className='flex items-center justify-center mt-16 px-2'>
-                <div className='w-96 border rounded bg-white px-8 py-8 '>
-                    <h4 className='text-center text-2xl mb-7'>Login</h4>
-                    <input
-                        type="text"
-                        placeholder='Email'
-                        className='input-box'
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        autoFocus
-                    />
-                    <PwdInput
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
-                    <Error error={error} />
-                    <button onClick={handleLogin} className='btn-primary'>
-                        Login
-                    </button>
-                    <p className='text-sm text-center mt-4'>
-                        Not registered yet?{' '}
-                        <Link to='/signup' className='font-medium underline text-primary'>
-                            Create an account
-                        </Link>
-                    </p>
+        loading ? <Loader /> :
+            <>
+                <Navbar />
+                <div className='flex items-center justify-center mt-16 px-2'>
+                    <div className='w-96 border rounded bg-white px-8 py-8 '>
+                        <h4 className='text-center text-2xl mb-7'>Login</h4>
+                        <input
+                            type="text"
+                            placeholder='Email'
+                            className='input-box'
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            autoFocus
+                        />
+                        <PwdInput
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
+                        <Error error={error} />
+                        <button onClick={handleLogin} className='btn-primary'>
+                            Login
+                        </button>
+                        <p className='text-sm text-center mt-4'>
+                            Not registered yet?{' '}
+                            <Link to='/signup' className='font-medium underline text-primary'>
+                                Create an account
+                            </Link>
+                        </p>
 
+                    </div>
                 </div>
-            </div>
-        </>
+            </>
 
     )
 }
