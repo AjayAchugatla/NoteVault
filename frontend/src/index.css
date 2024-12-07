@@ -4,10 +4,10 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Written to hide the default the eye icon of password field */
 input::-ms-reveal {
     display: none;
 }
-
 @layer base {
     html {
         font-family: "Poppins", sans-serif;
