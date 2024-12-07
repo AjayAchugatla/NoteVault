@@ -8,7 +8,7 @@ function SearchBar({ getSearchNotes, clearSearch }) {
     const to = localStorage.getItem("token");
     const [search, setSearch] = useRecoilState(searchAtom)
     return (
-        <div className={`w-80 flex items-center px-4 bg-slate-100 rounded-md ${to ? '' : 'hidden'} mr-2`}>
+        <div className={`w-80 flex items-center px-4 bg-slate-100 rounded-md ${to ? '' : 'hidden'} mr-2 dark:bg-black dark:border-2 dark: border-white dark:text-white`}>
             <input
                 type="text"
                 placeholder='Search notes'
@@ -18,7 +18,7 @@ function SearchBar({ getSearchNotes, clearSearch }) {
             />
             {search.length > 0
                 ? <IoMdClose
-                    className='cursor-pointer text-slate-400 hover:text-black text-2xl mr-1'
+                    className='cursor-pointer text-slate-400 hover:text-black text-2xl mr-1 dark:text-slate-300 dark:hover:text-white'
                     onClick={() => {
                         setSearch('')
                         clearSearch()
@@ -26,7 +26,7 @@ function SearchBar({ getSearchNotes, clearSearch }) {
                 />
                 : null}
             <FaMagnifyingGlass
-                className='cursor-pointer text-slate-400 hover:text-black'
+                className='cursor-pointer text-slate-400 hover:text-black dark:text-slate-300 dark:hover:text-white'
                 onClick={() => getSearchNotes(search)}
             />
 

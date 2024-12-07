@@ -3,7 +3,7 @@ import Navbar from "../components/Navbar"
 import NoteCard from "../components/NoteCard"
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { userAtom } from "../recoil/atoms/userAtom"
 import { noteAtom } from "../recoil/atoms/noteAtom"
 import { loaderAtom } from "../recoil/atoms/loaderAtom"
@@ -13,9 +13,11 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import NoData from '../components/NoData';
 import Loader from '../components/Loader';
+import { darkThemeAtom } from '../recoil/atoms/darkThemeAtom';
 
 function Home() {
 
+    const theme = useRecoilValue(darkThemeAtom)
     const navigate = useNavigate()
     const [_, setUserInfo] = useRecoilState(userAtom);
     const [noteInfo, setNoteInfo] = useRecoilState(noteAtom);
@@ -120,14 +122,18 @@ function Home() {
     }
 
     useEffect(() => {
+        if (theme)
+            document.getElementById("root").classList.add('dark')
+        else
+            document.getElementById("root").classList.remove('dark')
         getUser()
         getAllNotes()
-    }, [])
+    }, [theme])
 
     return (
         loading
-            ? <Loader />
-            : <>
+            ? <div className={` dark:bg-gray-900`}><Loader /></div>
+            : <div className={` dark:bg-[#202020] h-screen`}>
                 <Navbar getSearchNotes={getSearchNotes} clearSearch={clearSearch} />
                 <ToastContainer
                     position="top-right"
@@ -142,36 +148,37 @@ function Home() {
                     theme="colored"
                     transition:Bounce
                 />
-                {notFound ? <NoData /> : <div className="mr-7 mb-8">
-                    {allNotes.length > 0 ?
-                        <div className='grid grid-cols-1 gap-2 mt-8 lg:grid-cols-4'>
-                            {allNotes.map((item) => (
-                                <NoteCard
-                                    key={item._id}
-                                    title={item.title}
-                                    date={item.createdOn}
-                                    content={item.content}
-                                    tags={item.tags}
-                                    isPinned={item.isPinned}
-                                    onEdit={() => {
-                                        setNoteInfo(item);
-                                        navigate(`/edit/${item._id}`)
-                                    }}
-                                    onDelete={() => { deleteNote(item) }}
-                                    onPinNode={() => updateIsPinned(item)}
-                                    onView={async () => {
-                                        setNoteInfo(item)
-                                        navigate(`/note/${item._id}`)
-                                    }}
-                                />
-                            ))}
-                        </div>
-                        : <EmptyCard />}
-                </div>}
+                {notFound ? <NoData /> :
+                    <div className="mr-7 mb-8 ">
+                        {allNotes.length > 0 ?
+                            <div className='grid grid-cols-1 gap-2 mt-8 lg:grid-cols-4 '>
+                                {allNotes.map((item) => (
+                                    <NoteCard
+                                        key={item._id}
+                                        title={item.title}
+                                        date={item.createdOn}
+                                        content={item.content}
+                                        tags={item.tags}
+                                        isPinned={item.isPinned}
+                                        onEdit={() => {
+                                            setNoteInfo(item);
+                                            navigate(`/edit/${item._id}`)
+                                        }}
+                                        onDelete={() => { deleteNote(item) }}
+                                        onPinNode={() => updateIsPinned(item)}
+                                        onView={async () => {
+                                            setNoteInfo(item)
+                                            navigate(`/note/${item._id}`)
+                                        }}
+                                    />
+                                ))}
+                            </div>
+                            : <EmptyCard />}
+                    </div>}
                 <AddBtn onClick={() => {
                     navigate('/add')
                 }} />
-            </>
+            </div>
     )
 }
 
