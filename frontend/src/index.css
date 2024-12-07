@@ -4,6 +4,10 @@
 @tailwind components;
 @tailwind utilities;
 
+input::-ms-reveal {
+    display: none;
+}
+
 @layer base {
     html {
         font-family: "Poppins", sans-serif;

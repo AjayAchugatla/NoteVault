@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import Navbar from '../components/Navbar'
 import { Link, useNavigate } from 'react-router-dom'
 import { validateEmail } from '../utils/fun'
+import PwdInput from '../components/PwdInput'
 import axios from "axios"
 import Error from '../components/Error'
 
@@ -75,6 +76,7 @@ function Signup() {
                         placeholder='Name'
                         className='input-box'
                         onChange={(e) => setName(e.target.value)}
+                        autoFocus
                     />
                     <input
                         type="text"
@@ -82,10 +84,8 @@ function Signup() {
                         className='input-box'
                         onChange={(e) => setEmail(e.target.value)}
                     />
-                    <input
-                        type="password"
-                        placeholder='Password'
-                        className='input-box'
+                    <PwdInput
+                        value={password}
                         onChange={(e) => setPassword(e.target.value)}
                     />
 

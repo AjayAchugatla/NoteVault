@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Navbar from '../components/Navbar'
 import { Link, useNavigate } from 'react-router-dom'
 import { validateEmail } from '../utils/fun'
+import PwdInput from '../components/PwdInput'
 import axios from "axios"
 import Error from '../components/Error'
 
@@ -69,11 +70,9 @@ function Signin() {
                         className='input-box'
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
+                        autoFocus
                     />
-                    <input
-                        type="password"
-                        placeholder='Password'
-                        className='input-box'
+                    <PwdInput
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                     />
