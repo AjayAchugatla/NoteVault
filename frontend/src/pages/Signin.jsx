@@ -61,7 +61,7 @@ function Signin() {
     return (
         <>
             <Navbar />
-            <div className='flex items-center justify-center mt-16 px-2'>
+            <div className='flex items-center justify-center sm:mt-16 px-2 -mt-5 sm:h-auto h-screen'>
                 <div className='w-96 border rounded bg-white px-8 py-8 '>
                     <h4 className='text-center text-2xl mb-7'>Login</h4>
                     <input

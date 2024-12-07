@@ -1,6 +1,7 @@
 import express from "express";
 import { z } from "zod"
 import User from "../models/userModel.js"
+import Note from "../models/noteModel.js"
 import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt"
 import authMiddleware from "../middleware.js"
@@ -100,5 +101,26 @@ router.get("/get-user", authMiddleware, async (req, res) => {
         return res.json({ error: "Internal server error" });
     }
 });
+
+router.delete('/', authMiddleware, async (req, res) => {
+    try {
+        const user = await User.findOne({ _id: req.userId });
+        const password = req.body.password
+        const passwordMatch = await bcrypt.compare(password, user.password);
+        if (passwordMatch) {
+            await User.deleteOne({ _id: req.userId })
+            await Note.deleteMany({ _id: req.userId })
+            return res.json({
+                msg: 'Deletion Successful'
+            });
+        } else {
+            return res.json({
+                error: "Incorrect Password"
+            })
+        }
+    } catch (error) {
+        return res.json({ error: "Internal server error" });
+    }
+})
 
 export default router
