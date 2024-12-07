@@ -6,7 +6,6 @@ const DarkModeToggle = () => {
     const [darkTheme, setDarkTheme] = useRecoilState(darkThemeAtom);
 
     const toggleDarkMode = () => {
-        console.log(darkTheme);
         setDarkTheme(prev => {
             const newMode = !prev
             localStorage.setItem("darkTheme", JSON.stringify(newMode))
