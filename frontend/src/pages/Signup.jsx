@@ -72,44 +72,43 @@ function Signup() {
         getUser()
     }, [])
     return (
-        loading ? <Loader /> :
-            <>
-                <Navbar />
-                <div className='flex items-center justify-center mt-16 px-2'>
-                    <div className='w-96 border rounded bg-white px-8 py-8'>
-                        <h4 className='text-center text-2xl mb-7'>Signup</h4>
-                        <input
-                            type="text"
-                            placeholder='Name'
-                            className='input-box'
-                            onChange={(e) => setName(e.target.value)}
-                            autoFocus
-                        />
-                        <input
-                            type="text"
-                            placeholder='Email'
-                            className='input-box'
-                            onChange={(e) => setEmail(e.target.value)}
-                        />
-                        <PwdInput
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                        />
+        <>
+            <Navbar />
+            <div className='flex items-center justify-center mt-16 px-2'>
+                <div className='w-96 border rounded bg-white px-8 py-8'>
+                    <h4 className='text-center text-2xl mb-7'>Signup</h4>
+                    <input
+                        type="text"
+                        placeholder='Name'
+                        className='input-box'
+                        onChange={(e) => setName(e.target.value)}
+                        autoFocus
+                    />
+                    <input
+                        type="text"
+                        placeholder='Email'
+                        className='input-box'
+                        onChange={(e) => setEmail(e.target.value)}
+                    />
+                    <PwdInput
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
 
-                        <Error error={error} />
+                    <Error error={error} />
 
-                        <button onClick={handleSignup} className='btn-primary'>
-                            Create Account
-                        </button>
-                        <p className='text-sm text-center mt-4'>
-                            Already have an account?{" "}
-                            <Link to='/signin' className='font-medium underline text-primary'>
-                                Login
-                            </Link>
-                        </p>
-                    </div>
+                    <button onClick={handleSignup} className='btn-primary'>
+                        Create Account
+                    </button>
+                    <p className='text-sm text-center mt-4'>
+                        Already have an account?{" "}
+                        <Link to='/signin' className='font-medium underline text-primary'>
+                            Login
+                        </Link>
+                    </p>
                 </div>
-            </>
+            </div>
+        </>
 
     )
 }

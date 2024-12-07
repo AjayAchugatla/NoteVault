@@ -67,38 +67,37 @@ function Signin() {
     }, [])
 
     return (
-        loading ? <Loader /> :
-            <>
-                <Navbar />
-                <div className='flex items-center justify-center mt-16 px-2'>
-                    <div className='w-96 border rounded bg-white px-8 py-8 '>
-                        <h4 className='text-center text-2xl mb-7'>Login</h4>
-                        <input
-                            type="text"
-                            placeholder='Email'
-                            className='input-box'
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            autoFocus
-                        />
-                        <PwdInput
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                        />
-                        <Error error={error} />
-                        <button onClick={handleLogin} className='btn-primary'>
-                            Login
-                        </button>
-                        <p className='text-sm text-center mt-4'>
-                            Not registered yet?{' '}
-                            <Link to='/signup' className='font-medium underline text-primary'>
-                                Create an account
-                            </Link>
-                        </p>
+        <>
+            <Navbar />
+            <div className='flex items-center justify-center mt-16 px-2'>
+                <div className='w-96 border rounded bg-white px-8 py-8 '>
+                    <h4 className='text-center text-2xl mb-7'>Login</h4>
+                    <input
+                        type="text"
+                        placeholder='Email'
+                        className='input-box'
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        autoFocus
+                    />
+                    <PwdInput
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
+                    <Error error={error} />
+                    <button onClick={handleLogin} className='btn-primary'>
+                        Login
+                    </button>
+                    <p className='text-sm text-center mt-4'>
+                        Not registered yet?{' '}
+                        <Link to='/signup' className='font-medium underline text-primary'>
+                            Create an account
+                        </Link>
+                    </p>
 
-                    </div>
                 </div>
-            </>
+            </div>
+        </>
 
     )
 }
