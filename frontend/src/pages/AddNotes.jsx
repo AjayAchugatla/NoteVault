@@ -56,7 +56,7 @@ function AddNotes() {
     }
 
     return (
-        <div className='flex justify-center items-center h-screen px-2'>
+        <div className='flex justify-center items-center h-screen px-2 dark:bg-black dark:text-white'>
             <ToastContainer
                 position="top-right"
                 autoClose={5000}
@@ -76,7 +76,7 @@ function AddNotes() {
                     <label className='input-label'>TITLE</label>
                     <input
                         type="text"
-                        className={`text-lg text-slate-950 input-box`}
+                        className={`text-lg text-slate-950 input-box  dark:text-white`}
                         onChange={(e) => setTitle(e.target.value)}
                     />
                 </div>
@@ -84,7 +84,7 @@ function AddNotes() {
                     <label className='input-label'>CONTENT</label>
                     <textarea
                         type='text'
-                        className={`text-sm text-slate-950 outline-none bg-slate-50 p-2 rounded input-box `}
+                        className={`text-sm text-slate-950 outline-none bg-slate-50 p-2 rounded input-box dark:bg-black dark:text-white`}
                         rows={7}
                         onChange={(e) => setContent(e.target.value)}
                     />

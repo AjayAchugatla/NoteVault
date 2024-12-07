@@ -29,9 +29,9 @@ function TagInput({ tags, setTags, type }) {
     return (
         <div>
 
-            <div className="flex items-center gap-2 flex-wrap mt-2">
+            <div className="flex items-center gap-2 flex-wrap mt-2 ">
                 {tags?.map((tag, index) => (
-                    <span key={index} className='flex items-center gap-2 text-sm text-slate-900 bg-slate-100 px-3 py-1 rounded'>#{tag}
+                    <span key={index} className='flex items-center gap-2 text-sm text-slate-900 bg-slate-100 px-3 py-1 rounded dark:bg-black dark:text-white'>#{tag}
                         <button onClick={() => {
                             handleRemoveTag(tag)
                         }}><MdClose className={type === 'view' ? 'hidden' : ''} /></button>
