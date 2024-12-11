@@ -4,14 +4,12 @@ import { Link, useNavigate } from 'react-router-dom'
 import { validateEmail } from '../utils/fun'
 import PwdInput from '../components/PwdInput'
 import axios from "axios"
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 import Error from '../components/Error'
 import Loader from '../components/Loader'
 import { loaderAtom } from "../recoil/atoms/loaderAtom"
-import { darkThemeAtom } from '../recoil/atoms/darkThemeAtom';
 
 function Signup() {
-    const theme = useRecoilValue(darkThemeAtom)
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [name, setName] = useState("");
@@ -70,12 +68,8 @@ function Signup() {
     }
 
     useEffect(() => {
-        if (theme)
-            document.getElementById("root").classList.add('dark')
-        else
-            document.getElementById("root").classList.remove('dark')
         getUser()
-    }, [theme])
+    }, [])
     return (
         loading ? <div className={` dark:bg-gray-900`}><Loader /></div> :
             <div className={`dark:bg-[#202020] h-screen`}>
