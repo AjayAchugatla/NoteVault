@@ -122,13 +122,9 @@ function Home() {
     }
 
     useEffect(() => {
-        if (theme)
-            document.getElementById("root").classList.add('dark')
-        else
-            document.getElementById("root").classList.remove('dark')
         getUser()
         getAllNotes()
-    }, [theme])
+    }, [])
 
     return (
         loading
