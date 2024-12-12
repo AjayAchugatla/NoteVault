@@ -63,60 +63,6 @@ router.post("/signup", async (req, res) => {
     }
 });
 
-router.post("/send-verify-otp", authMiddleware, async (req, res) => {
-    try {
-        const userId = req.userId;
-        const user = await User.findOne({ _id: userId });
-        if (user.isAccountVerified) {
-            return res.json(
-                { success: true, message: "Account already verified" }
-            );
-        }
-        const otp = String(Math.floor(100000 + Math.random() * 900000))
-        user.verifyOtp = otp;
-        user.verifyOtpExpireAt = Date.now() + 60 * 60 * 1000;
-        await user.save();
-        const mailOptions = {
-            from: process.env.SMTP_USER,
-            to: user.email,
-            subject: 'Account Verification OTP',
-            text: `Hello ${user.fullName},\n\nPlease use the following OTP to verify your Note-Vault account: ${otp}\n\nRegards,\nNote-Vault Team`
-        }
-        const i = await transporter.sendMail(mailOptions)
-
-
-        return res.json(
-            { success: true, message: "OTP sent successfully" }
-        );
-    } catch (error) {
-        return res.json({ error: "Internal server error" });
-    }
-})
-
-router.post("/verify-otp", authMiddleware, async (req, res) => {
-    const { otp } = req.body;
-    const userId = req.userId;
-    try {
-        const user = await User.findOne({ _id: userId });
-        if (!user) {
-            return res.json({ error: "User not found" });
-        }
-
-        if (user.verifyOtp === otp && user.verifyOtpExpireAt > Date.now()) {
-            user.isAccountVerified = true;
-            await user.save();
-            return res.json({ success: true, message: "Account verified successfully" });
-        } else if (user.verifyOtpExpireAt < Date.now()) {
-            return res.json({ success: false, message: "OTP expired" });
-        }
-        else {
-            return res.json({ success: false, message: "Invalid OTP" });
-        }
-    } catch (error) {
-        return res.json({ error: "Internal server error" });
-    }
-})
-
 router.post("/signin", async (req, res) => {
     const details = req.body;
     const { success } = signinInput.safeParse(details)
@@ -145,6 +91,145 @@ router.post("/signin", async (req, res) => {
         return res.json({ error: "Internal server error" });
     }
 });
+
+router.post("/send-verify-otp", authMiddleware, async (req, res) => {
+    try {
+        const userId = req.userId;
+        const user = await User.findOne({ _id: userId });
+        if (user.isAccountVerified) {
+            return res.json(
+                { message: "Account already verified" }
+            );
+        }
+        const otp = String(Math.floor(100000 + Math.random() * 900000))
+        user.verifyOtp = otp;
+        user.verifyOtpExpireAt = Date.now() + 60 * 60 * 1000;
+        await user.save();
+        const mailOptions = {
+            from: process.env.SMTP_USER,
+            to: user.email,
+            subject: 'Account Verification OTP',
+            text: `Hello ${user.fullName},\n\nPlease use the following OTP to verify your Note-Vault account: ${otp}\n\nRegards,\nNote-Vault Team`
+        }
+        const i = await transporter.sendMail(mailOptions)
+
+
+        return res.json(
+            { message: "OTP sent successfully" }
+        );
+    } catch (error) {
+        return res.json({ error: "Internal server error" });
+    }
+})
+
+router.post("/verify-otp", authMiddleware, async (req, res) => {
+    const { otp } = req.body;
+    const userId = req.userId;
+    try {
+        const user = await User.findOne({ _id: userId });
+        if (!user) {
+            return res.json({ error: "User not found" });
+        }
+
+        if (user.verifyOtp === otp && user.verifyOtpExpireAt > Date.now()) {
+            user.isAccountVerified = true;
+            await user.save();
+            return res.json({ message: "Account verified successfully" });
+        } else if (user.verifyOtpExpireAt < Date.now()) {
+            return res.json({ error: "OTP expired" });
+        }
+        else {
+            return res.json({ error: "Invalid OTP" });
+        }
+    } catch (error) {
+        return res.json({ error: "Internal server error" });
+    }
+})
+
+router.post("/password-reset-otp", authMiddleware, async (req, res) => {
+    const { email } = req.body;
+
+    if (!email)
+        return res.json({ error: "Email is required" });
+    try {
+        const user = await User.findOne({ email: email })
+        if (!user)
+            return res.json({ error: "User doesn't exist" });
+
+        const otp = String(Math.floor(100000 + Math.random() * 900000))
+        user.resetOtp = otp;
+        user.resetOtpExpireAt = Date.now() + 15 * 60 * 1000;
+        await user.save();
+
+        const mailOptions = {
+            from: process.env.SMTP_USER,
+            to: user.email,
+            subject: 'Password Reset OTP',
+            text: `Hello ${user.fullName},\n\nYour OTP for resetting your password is ${otp}\n\nRegards,\nNote-Vault Team`
+        }
+        const i = await transporter.sendMail(mailOptions)
+        return res.json({
+            message: "OTP send successfuly"
+        })
+    } catch (error) {
+        return res.json({ error: "Internal Server Error" });
+
+    }
+})
+
+router.post('/verify-password-otp', authMiddleware, async (req, res) => {
+    const { otp } = req.body;
+    const userId = req.userId;
+
+    if (!otp)
+        return res.json({ error: "OTP not provided" })
+    try {
+        const user = await User.findOne({ _id: userId });
+        if (!user) {
+            return res.json({ error: "User doesn't exist" });
+        }
+
+        if (user.resetOtp === otp && user.resetOtpExpireAt > Date.now()) {
+            user.isAccountVerified = true;
+            await user.save();
+            return res.json({ message: "Account verified successfully" });
+        } else if (user.verifyOtpExpireAt < Date.now()) {
+            return res.json({ error: "OTP expired" });
+        }
+        else {
+            return res.json({ error: "Invalid OTP" });
+        }
+    } catch (error) {
+        return res.json({ error: "Internal server error" });
+    }
+
+})
+
+router.post('/set-new-password', authMiddleware, async (req, res) => {
+    const { password } = req.body;
+    const userId = req.userId;
+
+    if (!password) {
+        res.json({ error: "Please enter a new password" });
+    }
+    try {
+        const user = User.findOne({ _id: userId })
+        if (!user)
+            return res.json({ error: "User doesn't exist" });
+
+        const match = await bcrypt.compare(user.password, password)
+        if (match)
+            return res.json({ error: "It cannot be same as old one" });
+        user.password = password;
+        user.resetOtp = '';
+        user.resetOtpExpireAt = 0;
+        await user.save();
+
+        return res.json({ message: "Password reset successful." });
+    } catch (error) {
+        return res.json({ error: "Internal server error" });
+    }
+})
 
 router.get("/get-user", authMiddleware, async (req, res) => {
     try {
