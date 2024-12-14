@@ -42,21 +42,10 @@ router.post("/signup", async (req, res) => {
             password: encrptedPassword,
         };
 
-        // Sending welcome mail
         const user = await User.create(newUser);
-
-        const mailOptions = {
-            from: process.env.SMTP_USER,
-            to: details.email,
-            subject: 'Welcome to Note-Vault',
-            text: `Hello ${details.fullName},\n\nWelcome to Note-Vault. We are glad to have you on board. \n\nRegards,\nNote-Vault Team`
-        }
-        await transporter.sendMail(mailOptions)
-
         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
         return res.json({ token: token });
     } catch (error) {
-        // console.log(error);
         return res.json({ error: "Internal server error" });
     }
 });
