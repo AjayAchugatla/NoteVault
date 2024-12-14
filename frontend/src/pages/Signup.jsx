@@ -39,10 +39,7 @@ function Signup() {
                 email: email,
                 password: password,
             });
-            console.log(response.data);
             if (response.data.token) {
-                console.log('1');
-
                 const resp = await axios.post(import.meta.env.VITE_BASE_URL + "/user/send-verify-otp", {},
                     {
                         headers: {
@@ -50,19 +47,14 @@ function Signup() {
                         }
                     }
                 )
-                console.log(2);
                 if (resp.data.error) {
-                    console.log(3);
                     setError(resp.data.error)
                     return;
                 } else {
                     localStorage.setItem("token", response.data.token)
-                    console.log(4);
                     navigate("/email-verify");
                 }
-
             } else {
-                console.log(5);
                 setError(response.data.error)
             }
 

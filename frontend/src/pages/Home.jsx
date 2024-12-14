@@ -122,7 +122,9 @@ function Home() {
             })
             if (resp.data.message) {
                 toast(!noteData.isPinned ? 'Note Pinned Successfully' : 'Note Unpinned Successfully')
-                getAllNotes();
+                setTimeout(() => {
+                    getAllNotes();
+                }, 2000);
             }
         } catch (error) {
             console.log(error);
@@ -149,7 +151,7 @@ function Home() {
                     pauseOnFocusLoss
                     draggable
                     pauseOnHover
-                    theme="colored"
+                    theme={`${theme ? 'dark' : 'colored'}`}
                     transition:Bounce
                 />
                 {notFound ? <NoData /> :

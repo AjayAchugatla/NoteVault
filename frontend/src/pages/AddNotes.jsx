@@ -56,7 +56,7 @@ function AddNotes() {
     }
 
     return (
-        <div className='flex justify-center items-center h-screen px-2 dark:bg-black dark:text-white'>
+        <div className='flex justify-center items-center h-screen px-4 dark:bg-black dark:text-white'>
             <ToastContainer
                 position="top-right"
                 autoClose={2000}
@@ -71,7 +71,7 @@ function AddNotes() {
                 transition:Bounce
             />
             <div className='border w-full sm:w-96 px-4 flex justify-center flex-col'>
-                <IoIosClose onClick={closeNote} className=' text-5xl cursor-pointer relative mt-3 left-[300px] md:ml-6 md:left-72' />
+                <IoIosClose onClick={closeNote} className=' text-5xl cursor-pointer relative mt-3 left-72 sm:ml-6 sm:left-72 ' />
                 <div className='flex flex-col gap-2 mt-5'>
                     <label className='input-label'>TITLE</label>
                     <input

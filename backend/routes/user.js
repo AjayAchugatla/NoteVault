@@ -6,6 +6,8 @@ import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt"
 import authMiddleware from "../middleware.js"
 import transporter from "../config/nodemailer.js"
+import { welcomeEmail } from "../config/nodemailer.js";
+
 
 const saltRounds = 10;
 const signupInput = z.object({
@@ -42,8 +44,13 @@ router.post("/signup", async (req, res) => {
             password: encrptedPassword,
         };
 
+        welcomeEmail.to = details.email
+        welcomeEmail.subject = ` Welcome to NoteVault ,${details.fullName}`
+        await transporter.sendMail(welcomeEmail)
+
         const user = await User.create(newUser);
         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
+
         return res.json({ token: token });
     } catch (error) {
         return res.json({ error: "Internal server error" });
@@ -83,22 +90,30 @@ router.post("/send-verify-otp", authMiddleware, async (req, res) => {
     try {
         const userId = req.userId;
         const user = await User.findOne({ _id: userId });
-        // if (user.isAccountVerified) {
-        //     return res.json(
-        //         { error: "Account already verified" }
-        //     );
-        // }
         const otp = String(Math.floor(100000 + Math.random() * 900000))
         user.verifyOtp = otp;
         user.verifyOtpExpireAt = Date.now() + 60 * 60 * 1000;
         await user.save();
+
         const mailOptions = {
-            from: process.env.SMTP_USER,
+            from: `"NoteVault" ${process.env.SMTP_USER}`,
             to: user.email,
             subject: 'Account Verification OTP',
-            text: `Hello ${user.fullName},\n\nPlease use the following OTP to verify your Note-Vault account: ${otp}\n\nRegards,\nNote-Vault Team`
+            html: `
+            <div style="font-family: Arial, sans-serif; color: #333;">
+            <h1>Your OTP Code</h1>
+            <p>Hi ${user.fullName},</p>
+            <p>Your OTP code for accessing your NoteVault account is:</p>
+            <h2 style="color: #4CAF50; text-align: center;">${otp}</h2>
+            <p>This code is valid for the next 10 minutes. Please do not share it with anyone for security reasons.</p>
+            <p>If you didn’t request this code, please contact our support team immediately at <a href="mailto:notevault@zohomail.in">notevault@zohomail.in</a>.</p>
+            <p>Thank you for using NoteVault!<br>The NoteVault Team</p>
+            </div>
+            `,
         }
-        const i = await transporter.sendMail(mailOptions)
+
+        await transporter.sendMail(mailOptions)
+
         return res.json(
             { message: "OTP sent successfully" }
         );
@@ -246,7 +261,7 @@ router.delete('/', authMiddleware, async (req, res) => {
         const passwordMatch = await bcrypt.compare(password, user.password);
         if (passwordMatch) {
             await User.deleteOne({ _id: req.userId })
-            await Note.deleteMany({ _id: req.userId })
+            await Note.deleteMany({ userId: req.userId })
             return res.json({
                 msg: 'Deletion Successful'
             });
