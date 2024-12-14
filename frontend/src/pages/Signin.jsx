@@ -69,8 +69,8 @@ function Signin() {
         loading ? <div className={` dark:bg-gray-900`}><Loader /></div> :
             <div className={`dark:bg-[#202020] h-screen`}>
                 <Navbar />
-                <div className='flex items-center justify-center sm:mt-16 px-2 sm:h-auto h-screen -mt-8'>
-                    <div className='w-96 border rounded bg-white px-8 py-8 dark:bg-[#202020] dark:text-white '>
+                <div className='flex items-center justify-center sm:mt-16 px-4 sm:h-auto h-screen -mt-14'>
+                    <div className='w-96 border rounded bg-white px-8 py-8 dark:bg-[#202020] dark:text-white shadow-lg '>
                         <h4 className='text-center text-2xl mb-7'>Login</h4>
                         <input
                             type="text"

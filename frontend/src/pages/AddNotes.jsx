@@ -59,7 +59,7 @@ function AddNotes() {
         <div className='flex justify-center items-center h-screen px-2 dark:bg-black dark:text-white'>
             <ToastContainer
                 position="top-right"
-                autoClose={5000}
+                autoClose={2000}
                 hideProgressBar={false}
                 newestOnTop={false}
                 closeOnClick

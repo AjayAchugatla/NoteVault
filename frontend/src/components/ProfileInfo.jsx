@@ -6,7 +6,7 @@ import { BsThreeDotsVertical } from "react-icons/bs";
 import Menu from './Menu';
 import ThemeSwitch from './ThemeSwitch'
 
-function ProfileInfo() {
+function ProfileInfo({ display }) {
     const userInfo = useRecoilValue(userAtom);
     const token = localStorage.getItem("token");
     const [show, setShow] = useState(false)
@@ -18,17 +18,21 @@ function ProfileInfo() {
                 relative left-2 sm:left-0 font-medium bg-blue-100 ${token ? '' : 'hidden'}`}>
                     {getInitials(userInfo?.fullName)}
                 </div>
-                <div className={`text-center ${token ? '' : 'hidden'} `}>
+                <div className={`text-center ${token && display ? '' : 'hidden'} `}>
                     <p className='text-sm font-medium sm:block hidden'>{userInfo?.fullName}</p>
                 </div>
                 <ThemeSwitch />
-                <BsThreeDotsVertical
-                    className={`cursor-pointer ${token ? '' : 'hidden'}`}
-                    onClick={() => { setShow(prev => !prev) }}
-                />
-                {
-                    show ? <Menu /> : null
-                }
+                {display ?
+                    <>
+                        <BsThreeDotsVertical
+                            className={`cursor-pointer ${token ? '' : 'hidden'}`}
+                            onClick={() => { setShow(prev => !prev); }}
+                        />
+                        <>
+                            {show ? <Menu /> : null}
+                        </>
+                    </>
+                    : null}
             </div>
         </>
     )

@@ -9,6 +9,7 @@ import First from './pages/First.jsx'
 import ViewNote from './pages/ViewNote.jsx'
 import EditNotes from './pages/EditNotes.jsx'
 import Delete from './pages/Delete.jsx'
+import EmailVerify from './pages/EmailVerify.jsx'
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           <Route path='/signup' element={<Signup />}></Route>
           <Route path='/add' element={<AddNotes />}></Route>
           <Route path='/delete' element={<Delete />}></Route>
+          <Route path='/email-verify' element={<EmailVerify />}></Route>
         </Routes >
       </BrowserRouter>
     </>

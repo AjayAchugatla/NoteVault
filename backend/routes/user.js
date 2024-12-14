@@ -54,9 +54,7 @@ router.post("/signup", async (req, res) => {
         await transporter.sendMail(mailOptions)
 
         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
-        return res.json({
-            token,
-        });
+        return res.json({ token });
     } catch (error) {
         // console.log(error);
         return res.json({ error: "Internal server error" });
@@ -96,11 +94,11 @@ router.post("/send-verify-otp", authMiddleware, async (req, res) => {
     try {
         const userId = req.userId;
         const user = await User.findOne({ _id: userId });
-        if (user.isAccountVerified) {
-            return res.json(
-                { message: "Account already verified" }
-            );
-        }
+        // if (user.isAccountVerified) {
+        //     return res.json(
+        //         { error: "Account already verified" }
+        //     );
+        // }
         const otp = String(Math.floor(100000 + Math.random() * 900000))
         user.verifyOtp = otp;
         user.verifyOtpExpireAt = Date.now() + 60 * 60 * 1000;
@@ -112,8 +110,6 @@ router.post("/send-verify-otp", authMiddleware, async (req, res) => {
             text: `Hello ${user.fullName},\n\nPlease use the following OTP to verify your Note-Vault account: ${otp}\n\nRegards,\nNote-Vault Team`
         }
         const i = await transporter.sendMail(mailOptions)
-
-
         return res.json(
             { message: "OTP sent successfully" }
         );
@@ -246,7 +242,8 @@ router.get("/get-user", authMiddleware, async (req, res) => {
             fullName: isUser.fullName,
             email: isUser.email,
             _id: isUser._id,
-            createdOn: isUser.createdOn
+            createdOn: isUser.createdOn,
+            isAccountVerified: isUser.isAccountVerified
         });
     } catch (error) {
         return res.json({ error: "Internal server error" });

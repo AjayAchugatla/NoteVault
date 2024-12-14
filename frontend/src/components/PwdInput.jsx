@@ -14,7 +14,7 @@ function PwdInput({ value, onChange, placeholder }) {
                 onChange={onChange}
                 type={show ? "text" : "password"}
                 placeholder={placeholder || "Password"}
-                className='w-full text-sm bg-transparent py-3 mr-3 rounded outline-none'
+                className='w-full text-sm bg-transparent py-2 mr-3 rounded outline-none'
                 inputMode='text'
             />
             {show ? <FaRegEye

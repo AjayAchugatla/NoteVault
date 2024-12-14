@@ -34,10 +34,16 @@ function Home() {
                     Authorization: "Bearer " + token
                 }
             })
+
             if (!response.data._id) {
                 navigate('/signin')
                 setLoading(false)
             }
+            else if (!response.data.isAccountVerified) {
+                navigate('/email-verify')
+                setLoading(false)
+            }
+
             else {
                 setUserInfo(response.data)
             }
@@ -94,8 +100,10 @@ function Home() {
                 }
             })
             if (resp.data.message) {
-                getAllNotes();
                 toast.error("Note Deleted Successfully");
+                setTimeout(() => {
+                    getAllNotes();
+                }, 2000);
             }
         } catch (error) {
             console.log("An unexpected error occurred. Please try again.");
@@ -128,9 +136,9 @@ function Home() {
 
     return (
         loading
-            ? <div className={` dark:bg-gray-900`}><Loader /></div>
+            ? <div className={`dark:bg-[#202020]`}><Loader /></div>
             : <div className={` dark:bg-[#202020] h-screen`}>
-                <Navbar getSearchNotes={getSearchNotes} clearSearch={clearSearch} />
+                <Navbar display={true} getSearchNotes={getSearchNotes} clearSearch={clearSearch} />
                 <ToastContainer
                     position="top-right"
                     autoClose={2000}

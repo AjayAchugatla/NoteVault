@@ -40,9 +40,24 @@ function Signup() {
                 password: password,
             });
 
+            console.log(response.data);
             if (response.data.token) {
-                localStorage.setItem("token", response.data.token)
-                navigate("/dashboard");
+                const resp = await axios.post(import.meta.env.VITE_BASE_URL + "/user/send-verify-otp", {},
+                    {
+                        headers: {
+                            Authorization: "Bearer " + response.data.token
+                        }
+                    }
+                )
+                if (resp.data.error) {
+                    setError(resp.data.error)
+                    return;
+                } else {
+                    localStorage.setItem("token", response.data.token)
+
+                    navigate("/email-verify");
+                }
+
             } else {
                 setError(response.data.error)
             }
@@ -61,8 +76,10 @@ function Signup() {
                     Authorization: "Bearer " + token
                 }
             })
-            if (response.data._id)
+            if (response.data._id && response.data.isAccountVerified)
                 navigate('/dashboard')
+            else if (!response.isAccountVerified)
+                navigate('/email-verify')
         }
         setLoading(false)
     }
@@ -74,8 +91,8 @@ function Signup() {
         loading ? <div className={` dark:bg-gray-900`}><Loader /></div> :
             <div className={`dark:bg-[#202020] h-screen`}>
                 <Navbar />
-                <div className='flex items-center justify-center sm:mt-16 px-2 sm:h-auto h-screen -mt-8'>
-                    <div className='w-96 border rounded bg-white px-8 py-8 dark:bg-[#202020] dark:text-white'>
+                <div className='flex items-center justify-center sm:mt-16 px-4 sm:h-auto h-screen -mt-14'>
+                    <div className='w-96 border rounded bg-white px-8 py-8 dark:bg-[#202020] dark:text-white shadow-lg'>
                         <h4 className='text-center text-2xl mb-7'>Signup</h4>
                         <input
                             type="text"
