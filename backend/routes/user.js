@@ -54,7 +54,7 @@ router.post("/signup", async (req, res) => {
         await transporter.sendMail(mailOptions)
 
         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
-        return res.json({ token });
+        return res.json({ token: token });
     } catch (error) {
         // console.log(error);
         return res.json({ error: "Internal server error" });

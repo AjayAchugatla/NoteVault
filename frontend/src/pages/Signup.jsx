@@ -39,7 +39,7 @@ function Signup() {
                 email: email,
                 password: password,
             });
-
+            console.log(response.data);
             if (response.data.token) {
                 console.log('1');
 
