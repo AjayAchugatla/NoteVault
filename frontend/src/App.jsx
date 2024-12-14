@@ -10,6 +10,7 @@ import ViewNote from './pages/ViewNote.jsx'
 import EditNotes from './pages/EditNotes.jsx'
 import Delete from './pages/Delete.jsx'
 import EmailVerify from './pages/EmailVerify.jsx'
+import PasswordReset from './pages/PasswordReset.jsx'
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
           <Route path='/add' element={<AddNotes />}></Route>
           <Route path='/delete' element={<Delete />}></Route>
           <Route path='/email-verify' element={<EmailVerify />}></Route>
+          <Route path='/reset' element={<PasswordReset />}></Route>
         </Routes >
       </BrowserRouter>
     </>

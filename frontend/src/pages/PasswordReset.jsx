@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import Navbar from "../components/Navbar"
 import Error from '../components/Error'
 import axios from "axios"
@@ -7,86 +7,64 @@ import { useRecoilState } from 'recoil'
 import Loader from '../components/Loader'
 import { loaderAtom } from '../recoil/atoms/loaderAtom'
 import OTP_Input from '../components/OTP_Input'
+import PwdInput from "../components/PwdInput"
+import { toast } from 'react-toastify';
+import Toast from '../components/Toast'
 
-const EmailVerify = () => {
+const PasswordReset = () => {
 
+
+    const [error, setError] = useState("");
     const [loading, setLoading] = useRecoilState(loaderAtom)
     const navigate = useNavigate()
-    const [error, setError] = useState("");
     const inputRefs = React.useRef([])
-
+    const [pwd, setPwd] = useState("")
+    const [email, setEmail] = useState("")
 
     const onSubmit = async () => {
         const otp = inputRefs.current.map(ref => ref.value).join('')
-        if (otp.length < 6) {
-            setError("Enter complete otp to verify")
-            return;
-        }
-        setError("")
         try {
-            const resp = await axios.post(import.meta.env.VITE_BASE_URL + "/user/verify-otp", {
+            // setLoading(true)
+            const resp = await axios.post(import.meta.env.VITE_BASE_URL + "/user/set-new-password", {
+                email: email,
+                password: pwd,
                 otp: otp
-            }, {
-                headers: {
-                    Authorization: "Bearer " + localStorage.getItem("token")
-                }
             });
-
             if (resp.data.error) {
                 setError(resp.data.error)
                 return;
             } else {
-                setError("")
-                navigate('/dashboard')
+                toast.success(resp.data.message);
+                setTimeout(() => {
+                    navigate('/signin')
+                }, 2000);
             }
 
         } catch (error) {
-            setError("Internal server error")
-        }
-    }
-
-    const isVerified = async () => {
-        setLoading(true)
-        const token = localStorage.getItem("token")
-        if (!token) {
-            navigate('/signup')
-        }
-        try {
-            if (token) {
-                const response = await axios.get(import.meta.env.VITE_BASE_URL + "/user/get-user", {
-                    headers: {
-                        Authorization: "Bearer " + token
-                    }
-                })
-                if (response.data.isAccountVerified)
-                    navigate('/dashboard')
-            }
-            else
-                navigate('/signup')
-            setLoading(false)
-        } catch (error) {
-            setError("Internal Server Error")
+            setError("Internal Server error")
         }
         setLoading(false)
     }
 
-    useEffect(() => {
-        isVerified()
-    }, [])
-
-
     return (
         loading ? <div className={` dark:bg-gray-900`}><Loader /></div> :
             <>
+                <Toast />
                 <Navbar display={false} />
                 <div className='flex items-center sm:h-[90vh] justify-center dark:bg-[#202020] h-screen px-4 -mt-14 sm:mt-0'>
                     <div className='w-96 border border-slate-200 rounded bg-white px-8 py-8 dark:bg-[#202020] dark:text-white shadow-lg'>
-                        <h4 className='text-center text-2xl mb-3'>Email Verify OTP</h4>
+                        <h4 className='text-center text-2xl mb-3'>Password Reset</h4>
+                        <input type="email" className='input-box' onChange={e => { setEmail(e.target.value) }}
+                            placeholder='Enter your email' required autoFocus />
+                        <PwdInput value={pwd}
+                            onChange={(e) => { setPwd(e.target.value) }}
+                            placeholder={"New Password"}
+                        />
                         <p className='text-slate-400 dark:text-slate-500 text-center mb-3'>Enter the 6-digit code sent to your email id.</p>
                         <OTP_Input inputRefs={inputRefs} />
                         <Error error={error} />
                         <button className='btn-primary' onClick={onSubmit}>
-                            Verify Email
+                            Change Password
                         </button>
                     </div>
                 </div>
@@ -94,4 +72,4 @@ const EmailVerify = () => {
     )
 }
 
-export default EmailVerify
+export default PasswordReset

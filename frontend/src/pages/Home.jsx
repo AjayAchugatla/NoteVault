@@ -9,7 +9,8 @@ import { noteAtom } from "../recoil/atoms/noteAtom"
 import { loaderAtom } from "../recoil/atoms/loaderAtom"
 import EmptyCard from '../components/EmptyCard'
 import AddBtn from '../components/AddBtn';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
+import Toast from '../components/Toast';
 import 'react-toastify/dist/ReactToastify.css';
 import NoData from '../components/NoData';
 import Loader from '../components/Loader';
@@ -140,20 +141,8 @@ function Home() {
         loading
             ? <div className={`dark:bg-[#202020]`}><Loader /></div>
             : <div className={` dark:bg-[#202020] h-screen`}>
+                <Toast />
                 <Navbar display={true} getSearchNotes={getSearchNotes} clearSearch={clearSearch} />
-                <ToastContainer
-                    position="top-right"
-                    autoClose={2000}
-                    hideProgressBar={false}
-                    newestOnTop={false}
-                    closeOnClick
-                    rtl={false}
-                    pauseOnFocusLoss
-                    draggable
-                    pauseOnHover
-                    theme={`${theme ? 'dark' : 'colored'}`}
-                    transition:Bounce
-                />
                 {notFound ? <NoData /> :
                     <div className="mr-7 mb-8 ">
                         {allNotes.length > 0 ?

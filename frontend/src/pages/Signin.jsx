@@ -8,13 +8,15 @@ import { useRecoilState } from "recoil";
 import Error from '../components/Error'
 import Loader from "../components/Loader"
 import { loaderAtom } from "../recoil/atoms/loaderAtom"
+import { toast } from 'react-toastify';
+import Toast from "../components/Toast"
 
 function Signin() {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [error, setError] = useState(null)
     const [loading, setLoading] = useRecoilState(loaderAtom)
-
+    const [reset, setReset] = useState(false)
     const navigate = useNavigate();
 
     const handleLogin = async () => {
@@ -61,6 +63,23 @@ function Signin() {
         setLoading(false)
     }
 
+    const resetOtp = async () => {
+        try {
+            setLoading(true)
+            const resp = await axios.post(import.meta.env.VITE_BASE_URL + '/user/password-reset-otp', { email })
+
+            if (resp.data.error) {
+                setError(resp.data.error)
+            } else {
+                setLoading(false)
+                navigate('/reset')
+            }
+        } catch (error) {
+            setError('Internal Server Error')
+        }
+        setLoading(false)
+    }
+
     useEffect(() => {
         getUser()
     }, [])
@@ -69,9 +88,9 @@ function Signin() {
         loading ? <div className={` dark:bg-gray-900`}><Loader /></div> :
             <div className={`dark:bg-[#202020] h-screen`}>
                 <Navbar />
-                <div className='flex items-center justify-center sm:mt-16 px-4 sm:h-auto h-screen -mt-14'>
+                <div className={`flex items-center justify-center ${!reset ? 'sm:mt-16' : 'sm:h-screen'} px-4 sm:h-auto h-screen -mt-14`}>
                     <div className='w-96 border rounded bg-white px-8 py-8 dark:bg-[#202020] dark:text-white shadow-lg '>
-                        <h4 className='text-center text-2xl mb-7'>Login</h4>
+                        {!reset ? <h4 className='text-center text-2xl mb-7'>Login</h4> : null}
                         <input
                             type="text"
                             placeholder='Email'
@@ -80,20 +99,31 @@ function Signin() {
                             onChange={(e) => setEmail(e.target.value)}
                             autoFocus
                         />
-                        <PwdInput
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                        />
+                        {!reset ?
+                            <><PwdInput value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                            />
+                                <p className='text-sm text-center mt-4'>
+                                    Forgot Passowrd?{' '}
+                                    <button onClick={() => {
+                                        setError("")
+                                        setReset(true)
+                                    }
+                                    } className='font-medium underline text-primary'>
+                                        Reset it Here
+                                    </button>
+                                </p></>
+                            : null}
                         <Error error={error} />
-                        <button onClick={handleLogin} className='btn-primary'>
-                            Login
+                        <button onClick={reset ? resetOtp : handleLogin} className='btn-primary'>
+                            {reset ? 'Send OTP' : 'Login'}
                         </button>
-                        <p className='text-sm text-center mt-4'>
+                        {!reset ? <p className='text-sm text-center mt-4'>
                             Not registered yet?{' '}
                             <Link to='/signup' className='font-medium underline text-primary'>
                                 Create an account
                             </Link>
-                        </p>
+                        </p> : null}
 
                     </div>
                 </div>

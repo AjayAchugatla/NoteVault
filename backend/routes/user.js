@@ -92,7 +92,7 @@ router.post("/send-verify-otp", authMiddleware, async (req, res) => {
         const user = await User.findOne({ _id: userId });
         const otp = String(Math.floor(100000 + Math.random() * 900000))
         user.verifyOtp = otp;
-        user.verifyOtpExpireAt = Date.now() + 60 * 60 * 1000;
+        user.verifyOtpExpireAt = Date.now() + 10 * 60 * 1000;
         await user.save();
 
         const mailOptions = {
@@ -106,7 +106,7 @@ router.post("/send-verify-otp", authMiddleware, async (req, res) => {
             <p>Your OTP code for accessing your NoteVault account is:</p>
             <h2 style="color: #4CAF50; text-align: center;">${otp}</h2>
             <p>This code is valid for the next 10 minutes. Please do not share it with anyone for security reasons.</p>
-            <p>If you didn’t request this code, please contact our support team immediately at <a href="mailto:notevault@zohomail.in">notevault@zohomail.in</a>.</p>
+            <p>If you didn’t request this code, ignore this email.</p>
             <p>Thank you for using NoteVault!<br>The NoteVault Team</p>
             </div>
             `,
@@ -146,7 +146,7 @@ router.post("/verify-otp", authMiddleware, async (req, res) => {
     }
 })
 
-router.post("/password-reset-otp", authMiddleware, async (req, res) => {
+router.post("/password-reset-otp", async (req, res) => {
     const { email } = req.body;
 
     if (!email)
@@ -158,41 +158,54 @@ router.post("/password-reset-otp", authMiddleware, async (req, res) => {
 
         const otp = String(Math.floor(100000 + Math.random() * 900000))
         user.resetOtp = otp;
-        user.resetOtpExpireAt = Date.now() + 15 * 60 * 1000;
+        user.resetOtpExpireAt = Date.now() + 10 * 60 * 1000;
         await user.save();
 
         const mailOptions = {
             from: process.env.SMTP_USER,
             to: user.email,
             subject: 'Password Reset OTP',
-            text: `Hello ${user.fullName},\n\nYour OTP for resetting your password is ${otp}\n\nRegards,\nNote-Vault Team`
+            html: `
+            <div style="font-family: Arial, sans-serif; color: #333;">
+            <h1>Your OTP Code</h1>
+            <p>Hi ${user.fullName},</p>
+            <p>Your OTP code for resetting your NoteVault account password is:</p>
+            <h2 style="color: #4CAF50; text-align: center;">${otp}</h2>
+            <p>This code is valid for the next 10 minutes. Please do not share it with anyone for security reasons.</p>
+            <p>If you didn’t request this code, ignore this email</p>
+            <p>Thank you for using NoteVault!<br>The NoteVault Team</p>
+            </div>
+            `,
         }
-        const i = await transporter.sendMail(mailOptions)
+        await transporter.sendMail(mailOptions)
         return res.json({
             message: "OTP send successfuly"
         })
     } catch (error) {
         return res.json({ error: "Internal Server Error" });
-
     }
 })
 
-router.post('/verify-password-otp', authMiddleware, async (req, res) => {
-    const { otp } = req.body;
-    const userId = req.userId;
-
+router.post('/set-new-password', async (req, res) => {
+    const { email, password, otp } = req.body;
     if (!otp)
         return res.json({ error: "OTP not provided" })
+    else if (password === "")
+        return res.json({ error: "Enter a password" })
     try {
-        const user = await User.findOne({ _id: userId });
+        const user = await User.findOne({ email: email });
         if (!user) {
             return res.json({ error: "User doesn't exist" });
         }
-
         if (user.resetOtp === otp && user.resetOtpExpireAt > Date.now()) {
-            user.isAccountVerified = true;
+            const match = await bcrypt.compare(password, user.password)
+            if (match)
+                return res.json({ error: "It cannot be same as old one" });
+            user.password = await bcrypt.hash(password, saltRounds);
+            user.resetOtp = '';
+            user.resetOtpExpireAt = 0;
             await user.save();
-            return res.json({ message: "Account verified successfully" });
+            return res.json({ message: "Password reset successful" });
         } else if (user.verifyOtpExpireAt < Date.now()) {
             return res.json({ error: "OTP expired" });
         }
@@ -203,32 +216,7 @@ router.post('/verify-password-otp', authMiddleware, async (req, res) => {
         return res.json({ error: "Internal server error" });
     }
 
-})
 
-router.post('/set-new-password', authMiddleware, async (req, res) => {
-    const { password } = req.body;
-    const userId = req.userId;
-
-    if (!password) {
-        res.json({ error: "Please enter a new password" });
-    }
-    try {
-        const user = User.findOne({ _id: userId })
-        if (!user)
-            return res.json({ error: "User doesn't exist" });
-
-        const match = await bcrypt.compare(user.password, password)
-        if (match)
-            return res.json({ error: "It cannot be same as old one" });
-        user.password = password;
-        user.resetOtp = '';
-        user.resetOtpExpireAt = 0;
-        await user.save();
-
-        return res.json({ message: "Password reset successful." });
-    } catch (error) {
-        return res.json({ error: "Internal server error" });
-    }
 })
 
 router.get("/get-user", authMiddleware, async (req, res) => {
@@ -260,8 +248,8 @@ router.delete('/', authMiddleware, async (req, res) => {
         const password = req.body.password
         const passwordMatch = await bcrypt.compare(password, user.password);
         if (passwordMatch) {
-            await User.deleteOne({ _id: req.userId })
             await Note.deleteMany({ userId: req.userId })
+            await User.deleteOne({ _id: req.userId })
             return res.json({
                 msg: 'Deletion Successful'
             });
