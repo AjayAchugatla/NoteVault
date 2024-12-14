@@ -38,7 +38,6 @@ function EditNote() {
                 setError(resp.data.error)
             }
         } catch (error) {
-            console.log(error);
             setError("Internal Server Error")
         }
     }

@@ -40,7 +40,6 @@ function Signup() {
                 password: password,
             });
 
-            console.log(response.data);
             if (response.data.token) {
                 const resp = await axios.post(import.meta.env.VITE_BASE_URL + "/user/send-verify-otp", {},
                     {
@@ -54,7 +53,6 @@ function Signup() {
                     return;
                 } else {
                     localStorage.setItem("token", response.data.token)
-
                     navigate("/email-verify");
                 }
 
