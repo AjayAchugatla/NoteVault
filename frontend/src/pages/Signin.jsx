@@ -85,7 +85,7 @@ function Signin() {
     }, [])
 
     return (
-        loading ? <div className={` dark:bg-gray-900`}><Loader /></div> :
+        loading ? <div className={`dark:bg-[#202020]`}><Loader /></div> :
             <div className={`dark:bg-[#202020] h-screen`}>
                 <Navbar />
                 <div className={`flex items-center justify-center ${!reset ? 'sm:mt-16' : 'sm:h-screen'} px-4 sm:h-auto h-screen -mt-14`}>
