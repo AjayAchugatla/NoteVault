@@ -206,11 +206,11 @@ router.post('/set-new-password', async (req, res) => {
             user.resetOtpExpireAt = 0;
             await user.save();
             return res.json({ message: "Password reset successful" });
-        } else if (user.verifyOtpExpireAt < Date.now()) {
-            return res.json({ error: "OTP expired" });
+        } else if (user.resetOtp !== otp) {
+            return res.json({ error: "Invalid OTP" });
         }
         else {
-            return res.json({ error: "Invalid OTP" });
+            return res.json({ error: "OTP expired" });
         }
     } catch (error) {
         return res.json({ error: "Internal server error" });
