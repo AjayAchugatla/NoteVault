@@ -69,7 +69,7 @@ const PasswordReset = () => {
     }, [])
 
     return (
-        loading ? <div className={` dark:bg-gray-900`}><Loader /></div> :
+        loading ? <div className={` dark:bg-[#202020]`}><Loader /></div> :
             <>
                 <Toast />
                 <Navbar display={false} />
