@@ -7,6 +7,11 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+    scroll-behavior: smooth;
+}
+
+
 /* Written to hide the default the eye icon of password field */
 input::-ms-reveal {
     display: none;

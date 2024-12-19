@@ -5,7 +5,7 @@ import Home from './pages/Home.jsx'
 import Signin from './pages/Signin.jsx'
 import Signup from './pages/Signup.jsx'
 import AddNotes from './pages/AddNotes.jsx'
-import First from './pages/First.jsx'
+import Landing from './pages/Landing.jsx'
 import ViewNote from './pages/ViewNote.jsx'
 import EditNotes from './pages/EditNotes.jsx'
 import Delete from './pages/Delete.jsx'
@@ -17,7 +17,7 @@ function App() {
     <>
       <BrowserRouter>
         <Routes>
-          <Route path='/' element={<First />}></Route>
+          <Route path='/' element={<Landing />}></Route>
           <Route path='/dashboard' element={<Home />}></Route>
           <Route path='/note/*' element={<ViewNote />}></Route>
           <Route path='/edit/*' element={<EditNotes />}></Route>
