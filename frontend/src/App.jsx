@@ -11,6 +11,7 @@ import EditNotes from './pages/EditNotes.jsx'
 import Delete from './pages/Delete.jsx'
 import EmailVerify from './pages/EmailVerify.jsx'
 import PasswordReset from './pages/PasswordReset.jsx'
+import { Analytics } from "@vercel/analytics/react"
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
           <Route path='/email-verify' element={<EmailVerify />}></Route>
           <Route path='/reset' element={<PasswordReset />}></Route>
         </Routes >
+        <Analytics />
       </BrowserRouter>
     </>
   )
