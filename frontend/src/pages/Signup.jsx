@@ -5,6 +5,7 @@ import { validateEmail } from '../utils/fun'
 import PwdInput from '../components/PwdInput'
 import axios from "axios"
 import { useRecoilState } from "recoil";
+import { userAtom } from '../recoil/atoms/userAtom'
 import Error from '../components/Error'
 import Loader from '../components/Loader'
 import { loaderAtom } from "../recoil/atoms/loaderAtom"
@@ -15,6 +16,7 @@ function Signup() {
     const [name, setName] = useState("");
     const [error, setError] = useState(null)
     const [loading, setLoading] = useRecoilState(loaderAtom)
+    const [user, setUser] = useRecoilState(userAtom)
     const navigate = useNavigate()
 
     const handleSignup = async () => {
@@ -52,14 +54,13 @@ function Signup() {
                     return;
                 } else {
                     localStorage.setItem("token", response.data.token)
+                    setUser(response.data);
                     navigate("/email-verify");
                 }
             } else {
                 setError(response.data.error)
             }
-
         } catch (error) {
-            console.log(6);
             setError("An unexpected error occured. Please try Later")
         }
     }

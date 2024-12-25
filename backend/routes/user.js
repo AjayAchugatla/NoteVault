@@ -51,7 +51,14 @@ router.post("/signup", async (req, res) => {
         const user = await User.create(newUser);
         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
 
-        return res.json({ token: token });
+        return res.json({
+            fullName: user.fullName,
+            email: user.email,
+            _id: user._id,
+            createdOn: user.createdOn,
+            isAccountVerified: user.isAccountVerified,
+            token: token
+        });
     } catch (error) {
         return res.json({ error: "Internal server error" });
     }

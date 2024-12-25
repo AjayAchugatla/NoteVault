@@ -22,7 +22,7 @@ function ProfileInfo({ display }) {
                     <p className='text-sm font-medium sm:block hidden'>{userInfo?.fullName}</p>
                 </div>
                 <ThemeSwitch />
-                {display ?
+                {
                     <>
                         <BsThreeDotsVertical
                             className={`cursor-pointer ${token ? '' : 'hidden'}`}
@@ -32,7 +32,7 @@ function ProfileInfo({ display }) {
                             {show ? <Menu /> : null}
                         </>
                     </>
-                    : null}
+                }
             </div>
         </>
     )
