@@ -5,7 +5,7 @@ import mongoose from "mongoose";
 import dotenv from 'dotenv';
 import userRouter from "./routes/user.js"
 import noteRouter from "./routes/note.js"
-
+import folderRouter from "./routes/folder.js";
 
 dotenv.config();
 
@@ -20,6 +20,7 @@ app.use(bodyParser.json())
 
 app.use("/api/v1/user", userRouter)
 app.use("/api/v1/note", noteRouter)
+app.use("/api/v1/folder", folderRouter)
 
 app.listen(port, () => {
     console.log(`App running on http://localhost:${port}`);
