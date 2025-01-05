@@ -3,9 +3,7 @@ import Navbar from "../components/Navbar"
 import Error from '../components/Error'
 import axios from "axios"
 import { useNavigate } from 'react-router-dom'
-import { useRecoilState } from 'recoil'
 import Loader from '../components/Loader'
-import { loaderAtom } from '../recoil/atoms/loaderAtom'
 import OTP_Input from '../components/OTP_Input'
 import PwdInput from "../components/PwdInput"
 import { toast } from 'react-toastify';
@@ -15,7 +13,7 @@ import { useEffect } from 'react'
 const PasswordReset = () => {
 
     const [error, setError] = useState("");
-    const [loading, setLoading] = useRecoilState(loaderAtom)
+    const [loading, setLoading] = useState(false)
     const navigate = useNavigate()
     const inputRefs = React.useRef([])
     const [pwd, setPwd] = useState("")

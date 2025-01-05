@@ -3,14 +3,13 @@ import Navbar from "../components/Navbar"
 import Error from '../components/Error'
 import axios from "axios"
 import { useNavigate } from 'react-router-dom'
-import { useRecoilState } from 'recoil'
 import Loader from '../components/Loader'
 import { loaderAtom } from '../recoil/atoms/loaderAtom'
 import OTP_Input from '../components/OTP_Input'
 
 const EmailVerify = () => {
 
-    const [loading, setLoading] = useRecoilState(loaderAtom)
+    const [loading, setLoading] = useState(false)
     const navigate = useNavigate()
     const [error, setError] = useState("");
     const inputRefs = React.useRef([])

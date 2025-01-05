@@ -3,8 +3,6 @@ import Navbar from "../components/Navbar"
 import NoteCard from "../components/NoteCard"
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilState } from "recoil";
-import { loaderAtom } from "../recoil/atoms/loaderAtom"
 import EmptyCard from '../components/EmptyCard'
 import AddBtn from '../components/AddBtn';
 import { toast } from 'react-toastify';
@@ -24,7 +22,7 @@ const Folder = () => {
     const navigate = useNavigate()
     const [allNotes, setAllNotes] = useState([])
     const [notFound, setNotFound] = useState(false)
-    const [loading, setLoading] = useRecoilState(loaderAtom)
+    const [loading, setLoading] = useState(false)
     const [modalIsOpen, setIsOpen] = useState(false);
     const [noteId, setNoteId] = useState("")
 

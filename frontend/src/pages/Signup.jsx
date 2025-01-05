@@ -8,14 +8,13 @@ import { useRecoilState } from "recoil";
 import { userAtom } from '../recoil/atoms/userAtom'
 import Error from '../components/Error'
 import Loader from '../components/Loader'
-import { loaderAtom } from "../recoil/atoms/loaderAtom"
 
 function Signup() {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [name, setName] = useState("");
     const [error, setError] = useState(null)
-    const [loading, setLoading] = useRecoilState(loaderAtom)
+    const [loading, setLoading] = useState(false)
     const [user, setUser] = useRecoilState(userAtom)
     const navigate = useNavigate()
 

@@ -4,7 +4,6 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from "recoil";
 import { userAtom } from "../recoil/atoms/userAtom"
-import { loaderAtom } from "../recoil/atoms/loaderAtom"
 import AddBtn from '../components/AddBtn';
 import { toast } from 'react-toastify';
 import Toast from '../components/Toast';
@@ -19,7 +18,7 @@ function Home() {
 
     const navigate = useNavigate()
     const [_, setUserInfo] = useRecoilState(userAtom);
-    const [loading, setLoading] = useRecoilState(loaderAtom)
+    const [loading, setLoading] = useState(false)
     const [modalIsOpen, setIsOpen] = useState(false);
     const [folder, setFolder] = useState('');
     const [error, setError] = useState('')

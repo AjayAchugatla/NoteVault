@@ -4,18 +4,14 @@ import { Link, useNavigate } from 'react-router-dom'
 import { validateEmail } from '../utils/fun'
 import PwdInput from '../components/PwdInput'
 import axios from "axios"
-import { useRecoilState } from "recoil";
 import Error from '../components/Error'
 import Loader from "../components/Loader"
-import { loaderAtom } from "../recoil/atoms/loaderAtom"
-import { toast } from 'react-toastify';
-import Toast from "../components/Toast"
 
 function Signin() {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [error, setError] = useState(null)
-    const [loading, setLoading] = useRecoilState(loaderAtom)
+    const [loading, setLoading] = useState(false)
     const [reset, setReset] = useState(false)
     const navigate = useNavigate();
 
