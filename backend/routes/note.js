@@ -7,6 +7,7 @@ const router = express.Router();
 const noteInput = z.object({
     title: z.string(),
     content: z.string(),
+    folderId: z.string(),
     tags: z.array(z.string()).optional()
 })
 
@@ -23,12 +24,13 @@ router.post('/', authMiddleware, async (req, res) => {
         const note = new Note({
             title: noteInfo.title,
             content: noteInfo.content,
-            tags: noteInfo.tags ? noteInfo.tags : [],
+            tags: noteInfo.tags || [],
+            folderId: noteInfo.folderId,
             userId: req.userId
         })
         await note.save();
 
-        return res.json({
+        return res.status(200).json({
             message: "Note Added Successfully"
         })
     } catch (error) {
@@ -38,10 +40,10 @@ router.post('/', authMiddleware, async (req, res) => {
     }
 })
 
-router.get('/', authMiddleware, async (req, res) => {
+router.get('/getNotes/:folderId', authMiddleware, async (req, res) => {
     try {
-        const notes = await Note.find({ userId: req.userId })
-            .sort({ isPinned: -1 });
+        const folderId = req.params.folderId
+        const notes = await Note.find({ userId: req.userId, folderId: folderId }).sort({ isPinned: -1 });
         return res.json({
             notes,
         })
@@ -72,11 +74,13 @@ router.put('/:noteId', authMiddleware, async (req, res) => {
     }
 })
 
-router.get('/search/:query', authMiddleware, async (req, res) => {
+router.get('/search/:folderId/:query', authMiddleware, async (req, res) => {
     try {
+        const folderId = req.params.folderId
         const query = req.params.query
         const notes = await Note.find({
             userId: req.userId,
+            folderId: folderId,
             $or: [
                 { title: { $regex: new RegExp(query, "i") } },
                 { content: { $regex: new RegExp(query, "i") } },

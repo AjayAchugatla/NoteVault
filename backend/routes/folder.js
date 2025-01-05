@@ -24,4 +24,14 @@ router.post("/create", authMiddleware, async (req, res) => {
 
 });
 
+router.get("/", authMiddleware, async (req, res) => {
+    const userId = req.userId;
+    try {
+        const folders = await Folder.find({ userId: userId });
+        return res.json(folders);
+    } catch (error) {
+        return res.json({ error: "Internal Server Error" });
+    }
+});
+
 export default router;  
