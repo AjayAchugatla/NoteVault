@@ -8,6 +8,8 @@ import { useRecoilState } from "recoil";
 import { userAtom } from '../recoil/atoms/userAtom'
 import Error from '../components/Error'
 import Loader from '../components/Loader'
+import Spinner from '../components/Spinner'
+
 
 function Signup() {
     const [email, setEmail] = useState("")
@@ -35,6 +37,7 @@ function Signup() {
         }
 
         try {
+            setLoading(true)
             const response = await axios.post(import.meta.env.VITE_BASE_URL + "/user/signup", {
                 fullName: name,
                 email: email,
@@ -56,7 +59,9 @@ function Signup() {
                     setUser(response.data);
                     navigate("/email-verify");
                 }
+                setLoading(false)
             } else {
+                setLoading(false)
                 setError(response.data.error)
             }
         } catch (error) {
@@ -85,44 +90,47 @@ function Signup() {
         getUser()
     }, [])
     return (
-        loading ? <div className={` dark:bg-[#202020]`}><Loader /></div> :
-            <div className={`dark:bg-[#202020] h-screen`}>
-                <Navbar />
-                <div className='flex items-center justify-center sm:mt-16 px-4 sm:h-auto h-screen -mt-14'>
-                    <div className='w-96 border rounded bg-white px-8 py-8 dark:bg-[#202020] dark:text-white shadow-lg'>
-                        <h4 className='text-center text-2xl mb-7'>Signup</h4>
-                        <input
-                            type="text"
-                            placeholder='Name'
-                            className='input-box'
-                            onChange={(e) => setName(e.target.value)}
-                            autoFocus
-                        />
-                        <input
-                            type="text"
-                            placeholder='Email'
-                            className='input-box'
-                            onChange={(e) => setEmail(e.target.value)}
-                        />
-                        <PwdInput
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                        />
 
-                        <Error error={error} />
+        <div className={`dark:bg-[#202020] h-screen`}>
+            <Navbar />
+            <div className='flex items-center justify-center sm:mt-16 px-4 sm:h-auto h-screen -mt-14'>
+                <div className='w-96 border rounded bg-white px-8 py-8 dark:bg-[#202020] dark:text-white shadow-lg'>
+                    <h4 className='text-center text-2xl mb-7'>Signup</h4>
+                    <input
+                        type="text"
+                        placeholder='Name'
+                        className='input-box'
+                        onChange={(e) => setName(e.target.value)}
+                        autoFocus
+                    />
+                    <input
+                        type="text"
+                        placeholder='Email'
+                        className='input-box'
+                        onChange={(e) => setEmail(e.target.value)}
+                    />
+                    <PwdInput
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
 
-                        <button onClick={handleSignup} className='btn-primary'>
-                            Create Account
-                        </button>
-                        <p className='text-sm text-center mt-4'>
-                            Already have an account?{" "}
-                            <Link to='/signin' className='font-medium underline text-primary'>
-                                Login
-                            </Link>
-                        </p>
-                    </div>
+                    <Error error={error} />
+
+                    <button onClick={handleSignup} className={`btn-primary ${loading ? 'bg-blue-300 hover:bg-blue-300' : ''}`}
+                        disabled={loading}
+                    >
+                        {loading ? <Spinner /> : 'Signup'
+                        }
+                    </button>
+                    <p className='text-sm text-center mt-4'>
+                        Already have an account?{" "}
+                        <Link to='/signin' className='font-medium underline text-primary'>
+                            Login
+                        </Link>
+                    </p>
                 </div>
             </div>
+        </div>
 
     )
 }

@@ -46,16 +46,14 @@ function Home() {
 
             if (!response.data._id) {
                 navigate('/signin')
-                setLoading(false)
             }
             else if (!response.data.isAccountVerified) {
                 navigate('/email-verify')
-                setLoading(false)
             }
             else {
                 setUserInfo(response.data)
-                setLoading(false)
             }
+            setLoading(false)
         } else {
             navigate('/signin')
         }
@@ -115,7 +113,7 @@ function Home() {
                 <Toast />
                 <Navbar display={true} />
                 <div >
-                    <div className="grid grid-cols-1 gap-5 mt-8 lg:grid-cols-5 ml-2">
+                    <div className="grid grid-cols-2 gap-5 mt-8 lg:grid-cols-5 ml-2">
                         {folders.map((item, index) => (
                             <div key={index} className="bg-white p-4 rounded-md  dark:bg-[#4b4a4a] dark:text-white cursor-pointer
                             hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105

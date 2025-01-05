@@ -165,9 +165,13 @@ const Folder = () => {
                 }, 2000);
             } else {
                 setError(resp.data.error)
+                navigate('/dashboard')
             }
         } catch (error) {
-            setError("Internal Server Error")
+            toast.error('Internal Server Error')
+            setTimeout(() => {
+                navigate('/dashboard')
+            }, 2000);
         }
     }
 
@@ -212,8 +216,31 @@ const Folder = () => {
         }
     }
 
+    const getUser = async () => {
+        setLoading(true)
+        const token = localStorage.getItem("token");
+        if (token) {
+            const response = await axios.get(import.meta.env.VITE_BASE_URL + "/user/get-user", {
+                headers: {
+                    Authorization: "Bearer " + token
+                }
+            })
+
+            if (!response.data._id) {
+                navigate('/signin')
+            }
+            else if (!response.data.isAccountVerified) {
+                navigate('/email-verify')
+            }
+            setLoading(false)
+        } else {
+            navigate('/signin')
+        }
+    }
+
     useEffect(() => {
         getAllNotes()
+        getUser()
     }, [])
 
     return (

@@ -4,7 +4,6 @@ import Error from '../components/Error'
 import axios from "axios"
 import { useNavigate } from 'react-router-dom'
 import Loader from '../components/Loader'
-import { loaderAtom } from '../recoil/atoms/loaderAtom'
 import OTP_Input from '../components/OTP_Input'
 
 const EmailVerify = () => {

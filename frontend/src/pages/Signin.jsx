@@ -5,7 +5,7 @@ import { validateEmail } from '../utils/fun'
 import PwdInput from '../components/PwdInput'
 import axios from "axios"
 import Error from '../components/Error'
-import Loader from "../components/Loader"
+import Spinner from '../components/Spinner'
 
 function Signin() {
     const [email, setEmail] = useState("")
@@ -28,6 +28,7 @@ function Signin() {
             return
         }
         try {
+            setLoading(true)
             const response = await axios.post(import.meta.env.VITE_BASE_URL + "/user/signin", {
                 email: email,
                 password: password,
@@ -39,7 +40,9 @@ function Signin() {
             else {
                 setError(response.data.error)
             }
+            setLoading(false)
         } catch (error) {
+            setLoading(false)
             setError("An unexpected error occured. Please try again")
         }
     }
@@ -81,49 +84,51 @@ function Signin() {
     }, [])
 
     return (
-        loading ? <div className={`dark:bg-[#202020]`}><Loader /></div> :
-            <div className={`dark:bg-[#202020] h-screen`}>
-                <Navbar />
-                <div className={`flex items-center justify-center ${!reset ? 'sm:mt-16' : 'sm:h-screen'} px-4 sm:h-auto h-screen -mt-14`}>
-                    <div className='w-96 border rounded bg-white px-8 py-8 dark:bg-[#202020] dark:text-white shadow-lg '>
-                        {!reset ? <h4 className='text-center text-2xl mb-7'>Login</h4> : null}
-                        <input
-                            type="text"
-                            placeholder='Email'
-                            className='input-box'
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            autoFocus
+        <div className={`dark:bg-[#202020] h-screen`}>
+            <Navbar />
+            <div className={`flex items-center justify-center ${!reset ? 'sm:mt-16' : 'sm:h-screen'} px-4 sm:h-auto h-screen -mt-14`}>
+                <div className='w-96 border rounded bg-white px-8 py-8 dark:bg-[#202020] dark:text-white shadow-lg '>
+                    {!reset ? <h4 className='text-center text-2xl mb-7'>Login</h4> : null}
+                    <input
+                        type="text"
+                        placeholder='Email'
+                        className='input-box'
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        autoFocus
+                    />
+                    {!reset ?
+                        <><PwdInput value={password}
+                            onChange={(e) => setPassword(e.target.value)}
                         />
-                        {!reset ?
-                            <><PwdInput value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                            />
-                                <p className='text-sm text-center mt-4'>
-                                    Forgot Passowrd?{' '}
-                                    <button onClick={() => {
-                                        setError("")
-                                        setReset(true)
-                                    }
-                                    } className='font-medium underline text-primary'>
-                                        Reset it Here
-                                    </button>
-                                </p></>
-                            : null}
-                        <Error error={error} />
-                        <button onClick={reset ? resetOtp : handleLogin} className='btn-primary'>
-                            {reset ? 'Send OTP' : 'Login'}
-                        </button>
-                        {!reset ? <p className='text-sm text-center mt-4'>
-                            Not registered yet?{' '}
-                            <Link to='/signup' className='font-medium underline text-primary'>
-                                Create an account
-                            </Link>
-                        </p> : null}
+                            <p className='text-sm text-center mt-4'>
+                                Forgot Passowrd?{' '}
+                                <button onClick={() => {
+                                    setError("")
+                                    setReset(true)
+                                }
+                                } className='font-medium underline text-primary'>
+                                    Reset it Here
+                                </button>
+                            </p></>
+                        : null}
+                    <Error error={error} />
+                    <button onClick={reset ? resetOtp : handleLogin} className={`btn-primary ${loading ? 'bg-blue-300 hover:bg-blue-300' : ''}`}
+                        disabled={loading}
+                    >
+                        {loading ? <Spinner /> :
+                            (reset ? 'Send OTP' : 'Login')}
+                    </button>
+                    {!reset ? <p className='text-sm text-center mt-4'>
+                        Not registered yet?{' '}
+                        <Link to='/signup' className='font-medium underline text-primary'>
+                            Create an account
+                        </Link>
+                    </p> : null}
 
-                    </div>
                 </div>
             </div>
+        </div>
 
     )
 }
