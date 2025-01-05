@@ -5,7 +5,6 @@ import Home from './pages/Home.jsx'
 import Signin from './pages/Signin.jsx'
 import Signup from './pages/Signup.jsx'
 import Landing from './pages/Landing.jsx'
-import ViewNote from './pages/ViewNote.jsx'
 import Delete from './pages/Delete.jsx'
 import EmailVerify from './pages/EmailVerify.jsx'
 import PasswordReset from './pages/PasswordReset.jsx'
@@ -20,7 +19,6 @@ function App() {
           <Route path='/' element={<Landing />}></Route>
           <Route path='/dashboard' element={<Home />}></Route>
           <Route path='/folder/:id' element={<Folder />}></Route>
-          <Route path='/note/*' element={<ViewNote />}></Route>
           <Route path='/signin' element={<Signin />}></Route>
           <Route path='/signup' element={<Signup />}></Route>
           <Route path='/delete' element={<Delete />}></Route>

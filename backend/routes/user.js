@@ -7,7 +7,7 @@ import bcrypt from "bcrypt"
 import authMiddleware from "../middleware.js"
 import transporter from "../config/nodemailer.js"
 import { welcomeEmail } from "../config/nodemailer.js";
-
+import Folder from "../models/folderModel.js";
 
 const saltRounds = 10;
 const signupInput = z.object({
@@ -239,9 +239,7 @@ router.get("/get-user", authMiddleware, async (req, res) => {
 
         return res.json({
             fullName: isUser.fullName,
-            email: isUser.email,
             _id: isUser._id,
-            createdOn: isUser.createdOn,
             isAccountVerified: isUser.isAccountVerified
         });
     } catch (error) {
@@ -255,8 +253,9 @@ router.delete('/', authMiddleware, async (req, res) => {
         const password = req.body.password
         const passwordMatch = await bcrypt.compare(password, user.password);
         if (passwordMatch) {
-            await Note.deleteMany({ userId: req.userId })
-            await User.deleteOne({ _id: req.userId })
+            await Note.deleteMany({ userId: req.userId });
+            await Folder.deleteMany({ userId: req.userId });
+            await User.deleteOne({ _id: req.userId });
             return res.json({
                 msg: 'Deletion Successful'
             });
