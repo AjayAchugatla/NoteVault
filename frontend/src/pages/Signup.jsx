@@ -7,9 +7,8 @@ import axios from "axios"
 import { useRecoilState } from "recoil";
 import { userAtom } from '../recoil/atoms/userAtom'
 import Error from '../components/Error'
-import Loader from '../components/Loader'
 import Spinner from '../components/Spinner'
-
+import Loader from '../components/Loader'
 
 function Signup() {
     const [email, setEmail] = useState("")
@@ -17,6 +16,7 @@ function Signup() {
     const [name, setName] = useState("");
     const [error, setError] = useState(null)
     const [loading, setLoading] = useState(false)
+    const [pageLoading, setPageLoading] = useState(false)
     const [user, setUser] = useRecoilState(userAtom)
     const navigate = useNavigate()
 
@@ -70,7 +70,7 @@ function Signup() {
     }
 
     const getUser = async () => {
-        setLoading(true)
+        setPageLoading(true)
         const token = localStorage.getItem("token");
         if (token) {
             const response = await axios.get(import.meta.env.VITE_BASE_URL + "/user/get-user", {
@@ -83,12 +83,17 @@ function Signup() {
             else if (!response.isAccountVerified)
                 navigate('/email-verify')
         }
-        setLoading(false)
+        setPageLoading(false)
     }
 
     useEffect(() => {
         getUser()
     }, [])
+
+    if (pageLoading) {
+        return <Loader />
+    }
+
     return (
 
         <div className={`dark:bg-[#202020] h-screen`}>

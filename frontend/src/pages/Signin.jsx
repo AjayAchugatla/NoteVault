@@ -6,12 +6,14 @@ import PwdInput from '../components/PwdInput'
 import axios from "axios"
 import Error from '../components/Error'
 import Spinner from '../components/Spinner'
+import Loader from '../components/Loader'
 
 function Signin() {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [error, setError] = useState(null)
     const [loading, setLoading] = useState(false)
+    const [pageLoading, setPageLoading] = useState(false)
     const [reset, setReset] = useState(false)
     const navigate = useNavigate();
 
@@ -48,7 +50,7 @@ function Signin() {
     }
 
     const getUser = async () => {
-        setLoading(true)
+        setPageLoading(true)
         const token = localStorage.getItem("token");
         if (token) {
             const response = await axios.get(import.meta.env.VITE_BASE_URL + "/user/get-user", {
@@ -59,7 +61,7 @@ function Signin() {
             if (response.data._id)
                 navigate('/dashboard')
         }
-        setLoading(false)
+        setPageLoading(false)
     }
 
     const resetOtp = async () => {
@@ -82,6 +84,10 @@ function Signin() {
     useEffect(() => {
         getUser()
     }, [])
+
+    if (pageLoading) return (
+        <Loader />
+    )
 
     return (
         <div className={`dark:bg-[#202020] h-screen`}>
