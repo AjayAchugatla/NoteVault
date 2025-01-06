@@ -21,7 +21,7 @@ Explore the live version of NoteVault: [Visit Here](https://note-vault-sand.verc
 - **Frontend**: React, Tailwind CSS
 - **Backend**: Node.js, Express.js
 - **Database**: MongoDB (Cloud-based)
-- **Hosting**: Render (Backend) and Vercel (Frontend)
+- **Hosting**: Railway (Backend) and Vercel (Frontend)
 
 
 ## Folder Structure
