@@ -24,7 +24,6 @@ function Home() {
     const [error, setError] = useState('')
     const [folders, setFolders] = useState([])
 
-
     function openModal() {
         setIsOpen(true);
     }
@@ -63,9 +62,14 @@ function Home() {
         if (!folder) {
             setError('Please enter folder name')
             return
+        } else if (folder.length > 20) {
+            setError('Folder name should be less than 20 characters')
+            return
         }
+
         setError('')
         try {
+            setLoading(true)
             const resp = await axios.post(import.meta.env.VITE_BASE_URL + "/folder/create", {
                 name: folder
             }, {
@@ -76,14 +80,17 @@ function Home() {
             console.log(resp);
 
             if (resp.data.message) {
+                setFolder('')
                 toast.success('Folder created successfully')
                 closeModal()
                 getFolders()
             }
+            setLoading(false)
         }
         catch (error) {
             console.log(error);
             setError('An unexpected error occurred. Please try again.')
+            setLoading(false)
         }
 
     }
@@ -111,12 +118,13 @@ function Home() {
             ? <div className={`dark:bg-[#202020]`}><Loader /></div>
             : <div className={` dark:bg-[#202020] h-screen`}>
                 <Toast />
-                <Navbar display={true} />
+                <Navbar display={false} />
                 <div >
                     <div className="grid grid-cols-2 gap-5 mt-8 lg:grid-cols-5 ml-2">
                         {folders.map((item, index) => (
                             <div key={index} className="bg-white p-4 rounded-md  dark:bg-[#4b4a4a] dark:text-white cursor-pointer
-                            hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105
+                            hover:shadow-lg transition duration-300 ease-in-out
+                            dark:shadow-slate-700 dark:hover:shadow-md-slate-500
                             ">
                                 <div className="flex flex-col items-center">
                                     <FolderOpen size={80}
@@ -153,8 +161,9 @@ function Home() {
                                 Cancel
                             </button>
                             <button
-                                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                                className={`px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 ${loading ? 'cursor-not-allowed' : ''}`}
                                 onClick={addFolder}
+                                disabled={loading}
                             >
                                 Create
                             </button>

@@ -15,7 +15,9 @@ import Model from '../components/Modal';
 import { IoIosClose } from 'react-icons/io';
 import TagInput from '../components/TagInput';
 import Error from '../components/Error';
-
+import { darkThemeAtom } from '../recoil/atoms/darkThemeAtom';
+import { useRecoilValue } from 'recoil';
+import Spinner from '../components/Spinner';
 
 const Folder = () => {
 
@@ -25,6 +27,7 @@ const Folder = () => {
     const [loading, setLoading] = useState(false)
     const [modalIsOpen, setIsOpen] = useState(false);
     const [noteId, setNoteId] = useState("")
+    const darkTheme = useRecoilValue(darkThemeAtom)
 
     const [title, setTitle] = useState("")
     const [content, setContent] = useState("")
@@ -32,6 +35,7 @@ const Folder = () => {
     const [error, setError] = useState("")
     const [isUpdate, setIsUpdate] = useState(false)
     const [isView, setIsView] = useState(false)
+    const [req, setReq] = useState(false)
 
     const { id } = useParams()
 
@@ -104,7 +108,7 @@ const Folder = () => {
                 toast.error("Note Deleted Successfully");
                 setTimeout(() => {
                     getAllNotes();
-                }, 2000);
+                }, 1000);
             }
         } catch (error) {
             console.log("An unexpected error occurred. Please try again.");
@@ -146,6 +150,7 @@ const Folder = () => {
     }
 
     const addNewNote = async () => {
+        setReq(true)
         try {
             const resp = await axios.post(import.meta.env.VITE_BASE_URL + '/note/', {
                 title,
@@ -167,11 +172,13 @@ const Folder = () => {
                 setError(resp.data.error)
                 navigate('/dashboard')
             }
+            setReq(false)
         } catch (error) {
             toast.error('Internal Server Error')
             setTimeout(() => {
                 navigate('/dashboard')
             }, 2000);
+            setReq(false)
         }
     }
 
@@ -287,9 +294,8 @@ const Folder = () => {
                     openModal()
                 }} />
                 <Model modalIsOpen={modalIsOpen} closeModal={closeModal}>
-                    <div className='flex justify-center items-center px-2 '>
-                        <Toast />
-                        <div className='border w-full px-4 flex justify-center flex-col dark:bg-black'>
+                    <div className='flex justify-center items-center px-2'>
+                        <div className={`border w-full px-4 flex justify-center flex-col`}>
                             <IoIosClose
                                 onClick={closeModal}
                                 className=' text-5xl cursor-pointer relative mt-3 left-60 sm:left-[21rem]' />
@@ -321,7 +327,9 @@ const Folder = () => {
                             <Error error={error} />
                             <button className={`btn-primary font-medium  my-2
                             ${isView ? 'hidden' : 'block'}
+                            ${req ? 'cursor-not-allowed' : 'cursor-pointer'}
                             `}
+                                disabled={req}
                                 onClick={() => {
                                     if (isUpdate) {
                                         handleEditNote()
@@ -330,7 +338,7 @@ const Folder = () => {
                                     }
                                 }}
                             >
-                                {isUpdate ? 'Update' : 'ADD'}
+                                {req ? <Spinner /> : isUpdate ? 'Update' : 'ADD'}
                             </button>
                         </div>
                     </div>
