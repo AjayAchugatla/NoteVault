@@ -27,6 +27,10 @@ const noteSchema = new mongoose.Schema(
             ref: 'Folder',
             required: true
         },
+        inTrash: {
+            type: Boolean,
+            default: false
+        },
         createdOn: {
             type: Date,
             default: Date.now

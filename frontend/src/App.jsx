@@ -10,6 +10,7 @@ import EmailVerify from './pages/EmailVerify.jsx'
 import PasswordReset from './pages/PasswordReset.jsx'
 import { Analytics } from "@vercel/analytics/react"
 import Folder from './pages/Folder.jsx'
+import Trash from './pages/Trash.jsx'
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path='/signin' element={<Signin />}></Route>
           <Route path='/signup' element={<Signup />}></Route>
           <Route path='/delete' element={<Delete />}></Route>
+          <Route path='/trash' element={<Trash />}></Route>
           <Route path='/email-verify' element={<EmailVerify />}></Route>
           <Route path='/reset' element={<PasswordReset />}></Route>
         </Routes >

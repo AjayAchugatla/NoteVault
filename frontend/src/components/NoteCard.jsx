@@ -11,7 +11,8 @@ function NoteCard({
     onEdit,
     onDelete,
     onPinNode,
-    onView
+    onView,
+    trash
 }) {
     return (
         <div className='border rounded p-4 bg-white hover:shadow-xl transition-all ease-in-out ml-7 dark:bg-[#323030] dark:text-white'>
@@ -20,30 +21,36 @@ function NoteCard({
                     <h6 className='text-sm font-medium'>{title}</h6>
                     <span className="text-xs dark:text-white text-slate-500">{moment(date).format('Do MMM YYYY')}</span>
                 </div>
-                <MdOutlinePushPin
-                    className={`icon-btn ${isPinned ? 'text-primary' : 'text-slate-300 '}`}
-                    onClick={onPinNode}
-                />
+                {
+                    trash ?
+                        <MdOutlinePushPin
+                            className={`icon-btn ${isPinned ? 'text-primary' : 'text-slate-300 '}`}
+                            onClick={onPinNode}
+                        /> : null
+                }
             </div>
             <p className='text-xs text-slate-600 mt-2 dark:text-white'>{content?.slice(0, 20)}</p>
             <div className='flex  items-center justify-between mt-2'>
                 <div className="text-xs text-slate-500 dark:text-white">{tags.map((tag) => (
                     `#${tag} `
                 ))}</div>
-                <div className="flex items-center gap-2 mt-2 pb-2">
-                    <MdCreate
-                        className='icon-btn hover:text-green-600'
-                        onClick={onEdit}
-                    />
-                    <MdDelete
-                        className='icon-btn hover:text-red-500'
-                        onClick={onDelete}
-                    />
-                    <MdOutlineOpenInFull
-                        className='icon-btn hover:text-blue-500'
-                        onClick={onView}
-                    />
-                </div>
+                {
+                    trash ?
+                        <div className="flex items-center gap-2 mt-2 pb-2">
+                            <MdCreate
+                                className='icon-btn hover:text-green-600'
+                                onClick={onEdit}
+                            />
+                            <MdDelete
+                                className='icon-btn hover:text-red-500'
+                                onClick={onDelete}
+                            />
+                            <MdOutlineOpenInFull
+                                className='icon-btn hover:text-blue-500'
+                                onClick={onView}
+                            />
+                        </div> : null
+                }
             </div>
         </div>
     )

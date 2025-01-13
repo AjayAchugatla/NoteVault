@@ -10,6 +10,10 @@ const folderSchema = mongoose.Schema({
         required: true,
         ref: 'User',
     },
+    noteCount: {
+        type: Number,
+        default: 0,
+    },
     createdOn: {
         type: Date,
         default: Date.now,

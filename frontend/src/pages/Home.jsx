@@ -12,7 +12,7 @@ import Loader from '../components/Loader';
 import Model from '../components/Modal';
 import Error from '../components/Error';
 import { FolderOpen } from 'lucide-react';
-
+import { Trash2 } from 'lucide-react';
 
 function Home() {
 
@@ -69,7 +69,7 @@ function Home() {
 
         setError('')
         try {
-            setLoading(true)
+            // setLoading(true)
             const resp = await axios.post(import.meta.env.VITE_BASE_URL + "/folder/create", {
                 name: folder
             }, {
@@ -80,22 +80,23 @@ function Home() {
             console.log(resp);
 
             if (resp.data.message) {
-                setFolder('')
                 toast.success('Folder created successfully')
                 closeModal()
+                setFolder('')
                 getFolders()
             }
-            setLoading(false)
+            // setLoading(false)
         }
         catch (error) {
             console.log(error);
             setError('An unexpected error occurred. Please try again.')
-            setLoading(false)
+            // setLoading(false)
         }
 
     }
 
     const getFolders = async () => {
+        // setLoading(true);
         try {
             const resp = await axios.get(import.meta.env.VITE_BASE_URL + "/folder/", {
                 headers: {
@@ -103,8 +104,31 @@ function Home() {
                 }
             })
             setFolders(resp.data)
+            // setLoading(false);
+        } catch (error) {
+            // setLoading(false);
+            console.log(error);
+        }
+    }
+
+    const removeFolder = async (id) => {
+        try {
+            const resp = await axios.delete(import.meta.env.VITE_BASE_URL + '/folder/' + id, {
+                headers: {
+                    Authorization: "Bearer " + localStorage.getItem("token")
+                }
+            })
+
+            if (resp.data.error) {
+                toast.error(resp.data.error);
+            } else {
+                toast.success(resp.data.message)
+                getFolders()
+            }
         } catch (error) {
             console.log(error);
+            toast.error('Internal Server Error')
+
         }
     }
 
@@ -124,16 +148,23 @@ function Home() {
                         {folders.map((item, index) => (
                             <div key={index} className="bg-white p-4 rounded-md  dark:bg-[#4b4a4a] dark:text-white cursor-pointer
                             hover:shadow-lg transition duration-300 ease-in-out
-                            dark:shadow-slate-700 dark:hover:shadow-md-slate-500
+                            relative
                             ">
+                                <Trash2 className='absolute right-5 hover:text-red-500'
+                                    onClick={() => {
+                                        removeFolder(item._id);
+                                    }}
+                                />
                                 <div className="flex flex-col items-center">
                                     <FolderOpen size={80}
                                         onClick={() => {
                                             navigate(`/folder/${item._id}`)
                                         }}
                                     />
+                                    <p className='text-slate-400 text-[5px]'>
+                                        Notes Present : {item.noteCount}</p>
                                     <h1 className="text-lg font-semibold">{item.name}</h1>
-                                    <h2 className='text-sm text-slate-400'>{item.createdOn.slice(0, 10).split("-").reverse().join("-")}</h2>
+                                    <h2 className='text-xs text-slate-400'>{item.createdOn.slice(0, 10).split("-").reverse().join("-")}</h2>
                                 </div>
                             </div>
                         ))}
@@ -152,6 +183,7 @@ function Home() {
                             className='w-full p-2 border border-gray-300 rounded-md mb-4'
                             value={folder}
                             onChange={(e) => setFolder(e.target.value)}
+                            autoFocus
                         />
                         <Error error={error} />
                         <div className="flex justify-between mt-5">

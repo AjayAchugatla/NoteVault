@@ -2,6 +2,7 @@ import express from "express";
 import { z } from "zod"
 import Note from "../models/noteModel.js"
 import authMiddleware from "../middleware.js"
+import Folder from "../models/folderModel.js"
 
 const router = express.Router();
 const noteInput = z.object({
@@ -21,6 +22,13 @@ router.post('/', authMiddleware, async (req, res) => {
         })
     }
     try {
+        const folder = await Folder.findOne({ _id: noteInfo.folderId })
+        if (!folder) {
+            return res.json({
+                error: "Folder not found"
+            })
+        }
+
         const note = new Note({
             title: noteInfo.title,
             content: noteInfo.content,
@@ -29,6 +37,9 @@ router.post('/', authMiddleware, async (req, res) => {
             userId: req.userId
         })
         await note.save();
+
+        folder.noteCount += 1;
+        await folder.save();
 
         return res.status(200).json({
             message: "Note Added Successfully"
@@ -43,7 +54,7 @@ router.post('/', authMiddleware, async (req, res) => {
 router.get('/getNotes/:folderId', authMiddleware, async (req, res) => {
     try {
         const folderId = req.params.folderId
-        const notes = await Note.find({ userId: req.userId, folderId: folderId }).sort({ isPinned: -1 });
+        const notes = await Note.find({ userId: req.userId, folderId: folderId, inTrash: false }).sort({ isPinned: -1 },);
         return res.json({
             notes,
         })
@@ -112,25 +123,6 @@ router.get('/getNote/:id', authMiddleware, async (req, res) => {
     }
 })
 
-router.delete('/:noteId', authMiddleware, async (req, res) => {
-    const noteId = req.params.noteId;
-    try {
-        const note = await Note.findOne({ _id: noteId, userId: req.userId })
-        if (!note) {
-            return res.json({ error: "Note Not found" })
-        }
-
-        await Note.deleteOne({ _id: noteId, userId: req.userId })
-        return res.json({
-            message: "Note deleted successfully"
-        })
-    } catch (error) {
-        return res.json({
-            error: "Internal Server Error"
-        })
-    }
-})
-
 router.put('/pin/:noteId', authMiddleware, async (req, res) => {
     const noteId = req.params.noteId;
     const { isPinned } = req.body;
@@ -149,7 +141,68 @@ router.put('/pin/:noteId', authMiddleware, async (req, res) => {
     }
 })
 
+router.delete('/:noteId', authMiddleware, async (req, res) => {
+    const noteId = req.params.noteId;
+    try {
 
+        const note = await Note.findOne({ _id: noteId, userId: req.userId })
+        if (!note) {
+            return res.json({ error: "Note Not found" })
+        }
+        if (!note.inTrash) {
+            note.inTrash = true;
+            await note.save();
+            const folder = await Folder.findOne({ _id: note.folderId })
+            folder.noteCount -= 1;
+            await folder.save()
+        } else {
+            await Note.deleteOne({ _id: noteId, userId: req.userId });
+        }
+        return res.json({
+            message: "Note deleted successfully"
+        })
+    } catch (error) {
+        return res.status(500).json({
+            error: "Internal Server Error"
+        })
+    }
+})
+
+router.get('/trash', authMiddleware, async (req, res) => {
+    try {
+        const uid = req.userId
+        const notes = await Note.find({ userId: uid, inTrash: true })
+        return res.status(200).json(notes)
+    } catch (error) {
+        return res.status(500).json({
+            error: "Internal Server Error"
+        })
+    }
+})
+
+router.put("/restore/:id", authMiddleware, async (req, res) => {
+    const { noteId } = req.params;
+    try {
+        const note = await Note.findOne({ _id: noteId })
+        if (!note) {
+            return res.json({
+                error: "Note not found"
+            })
+        }
+
+        note.inTrash = false;
+        await note.save();
+
+        return res.json({
+            message: "Note Restored Successfully"
+        })
+
+    } catch (error) {
+        return res.status(500).json({
+            error: "Internal Server Error"
+        })
+    }
+})
 
 
 export default router

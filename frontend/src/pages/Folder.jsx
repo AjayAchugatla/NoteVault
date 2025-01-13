@@ -285,6 +285,7 @@ const Folder = () => {
                                             setIsView(true)
                                             openModal()
                                         }}
+                                        trash={false}
                                     />
                                 ))}
                             </div>
@@ -307,6 +308,7 @@ const Folder = () => {
                                     onChange={(e) => setTitle(e.target.value)}
                                     value={title}
                                     readOnly={isView}
+                                    autoFocus
                                 />
                             </div>
                             <div className='flex flex-col gap-2 mt-4'>

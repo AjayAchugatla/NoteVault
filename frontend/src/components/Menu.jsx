@@ -21,6 +21,10 @@ const Menu = () => {
                 className={`p-2 ${token ? '' : 'hidden'} border-gray-400 border-b-2 hover:bg-slate-100 dark:hover:bg-slate-700`}>
                 Delete Account
             </button>
+            <button onClick={() => { navigate('/trash') }}
+                className={`p-2 ${token ? '' : 'hidden'} border-gray-400 border-b-2 hover:bg-slate-100 dark:hover:bg-slate-700`}>
+                Trash
+            </button>
         </div>
     )
 }
