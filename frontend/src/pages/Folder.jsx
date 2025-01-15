@@ -278,7 +278,7 @@ const Folder = () => {
                                         }}
                                         onDelete={() => { deleteNote(item) }}
                                         onPinNode={() => updateIsPinned(item)}
-                                        onView={async () => {
+                                        onView={() => {
                                             setTitle(item.title)
                                             setContent(item.content)
                                             setTags(item.tags)

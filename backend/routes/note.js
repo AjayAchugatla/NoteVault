@@ -152,11 +152,11 @@ router.delete('/:noteId', authMiddleware, async (req, res) => {
         if (!note.inTrash) {
             note.inTrash = true;
             await note.save();
+        } else {
+            await Note.deleteOne({ _id: noteId, userId: req.userId });
             const folder = await Folder.findOne({ _id: note.folderId })
             folder.noteCount -= 1;
             await folder.save()
-        } else {
-            await Note.deleteOne({ _id: noteId, userId: req.userId });
         }
         return res.json({
             message: "Note deleted successfully"
@@ -181,7 +181,7 @@ router.get('/trash', authMiddleware, async (req, res) => {
 })
 
 router.put("/restore/:id", authMiddleware, async (req, res) => {
-    const { noteId } = req.params;
+    const noteId = req.params.id;
     try {
         const note = await Note.findOne({ _id: noteId })
         if (!note) {
@@ -189,9 +189,12 @@ router.put("/restore/:id", authMiddleware, async (req, res) => {
                 error: "Note not found"
             })
         }
-
         note.inTrash = false;
         await note.save();
+
+        const folder = await Folder.findOne({ _id: note.folderId })
+        folder.noteCount += 1;
+        await folder.save();
 
         return res.json({
             message: "Note Restored Successfully"
