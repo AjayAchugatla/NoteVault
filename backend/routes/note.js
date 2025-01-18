@@ -193,7 +193,6 @@ router.put("/restore/:id", authMiddleware, async (req, res) => {
         await note.save();
 
         const folder = await Folder.findOne({ _id: note.folderId })
-        folder.noteCount += 1;
         await folder.save();
 
         return res.json({
