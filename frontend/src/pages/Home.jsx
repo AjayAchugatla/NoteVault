@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Navbar from "../components/Navbar"
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { userAtom } from "../recoil/atoms/userAtom"
 import AddBtn from '../components/AddBtn';
 import { toast } from 'react-toastify';
@@ -13,6 +13,7 @@ import Model from '../components/Modal';
 import Error from '../components/Error';
 import { FolderOpen } from 'lucide-react';
 import { Trash2 } from 'lucide-react';
+import { darkThemeAtom } from '../recoil/atoms/darkThemeAtom';
 
 function Home() {
 
@@ -23,6 +24,7 @@ function Home() {
     const [folder, setFolder] = useState('');
     const [error, setError] = useState('')
     const [folders, setFolders] = useState([])
+    const darkTheme = useRecoilValue(darkThemeAtom)
 
     function openModal() {
         setIsOpen(true);
@@ -180,7 +182,7 @@ function Home() {
                             Enter Folder Name
                         </h2>
                         <input type="text"
-                            className='w-full p-2 border border-gray-300 rounded-md mb-4'
+                            className={`w-full p-2 border border-gray-300 rounded-md mb-4 text-black ${darkTheme && 'bg-[#202020] text-white'}`}
                             value={folder}
                             onChange={(e) => setFolder(e.target.value)}
                             autoFocus

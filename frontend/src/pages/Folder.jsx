@@ -304,7 +304,7 @@ const Folder = () => {
                                 <label className='input-label'>TITLE</label>
                                 <input
                                     type="text"
-                                    className={`text-lg text-slate-950 input-box  dark:text-white`}
+                                    className={`text-lg text-slate-950 input-box  ${darkTheme && 'text-white'}`}
                                     onChange={(e) => setTitle(e.target.value)}
                                     value={title}
                                     readOnly={isView}
@@ -315,7 +315,7 @@ const Folder = () => {
                                 <label className='input-label'>CONTENT</label>
                                 <textarea
                                     type='text'
-                                    className={`text-sm text-slate-950 outline-none bg-slate-50 p-2 rounded input-box dark:bg-black dark:text-white`}
+                                    className={`text-sm text-slate-950 outline-none p-2 rounded input-box ${darkTheme && 'text-white'}`}
                                     rows={7}
                                     onChange={(e) => setContent(e.target.value)}
                                     value={content}
