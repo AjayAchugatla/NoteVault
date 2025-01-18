@@ -84,6 +84,13 @@ const Trash = () => {
         <div className='dark:bg-[#202020] h-screen'>
             <Navbar />
             <Toast />
+            {
+                notes.length === 0 && <div className='flex h-96 items-center justify-center sm:mt-4 mt-10'>
+                    <p className='text-5xl font-medium text-slate-700 text-center leading-8 mt-5 dark:text-white'>
+                        Trash is Empty!
+                    </p>
+                </div>
+            }
             <div className='grid grid-cols-1 gap-2 mt-8 lg:grid-cols-4'>
                 {notes.map((note) => (
                     <NoteCard

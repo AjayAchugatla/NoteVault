@@ -14,6 +14,7 @@ import Error from '../components/Error';
 import { FolderOpen } from 'lucide-react';
 import { Trash2 } from 'lucide-react';
 import { darkThemeAtom } from '../recoil/atoms/darkThemeAtom';
+import Empty from '../components/NoFolder';
 
 function Home() {
 
@@ -139,6 +140,7 @@ function Home() {
         getFolders()
     }, [])
 
+
     return (
         loading
             ? <div className={`dark:bg-[#202020]`}><Loader /></div>
@@ -146,31 +148,34 @@ function Home() {
                 <Toast />
                 <Navbar display={false} />
                 <div >
-                    <div className="grid grid-cols-2 gap-5 mt-8 lg:grid-cols-5 ml-2">
-                        {folders.map((item, index) => (
-                            <div key={index} className="bg-white p-4 rounded-md  dark:bg-[#4b4a4a] dark:text-white cursor-pointer
+                    {folders.length === 0 ? <Empty />
+                        :
+                        <div className="grid grid-cols-2 gap-5 mt-8 lg:grid-cols-5 ml-2">
+                            {folders.map((item, index) => (
+                                <div key={index} className="bg-white p-4 rounded-md  dark:bg-[#4b4a4a] dark:text-white cursor-pointer
                             hover:shadow-lg transition duration-300 ease-in-out
                             relative
                             ">
-                                <Trash2 className='absolute right-5 hover:text-red-500'
-                                    onClick={() => {
-                                        removeFolder(item._id);
-                                    }}
-                                />
-                                <div className="flex flex-col items-center">
-                                    <FolderOpen size={80}
+                                    <Trash2 className='absolute right-5 hover:text-red-500'
                                         onClick={() => {
-                                            navigate(`/folder/${item._id}`)
+                                            removeFolder(item._id);
                                         }}
                                     />
-                                    <p className='text-slate-400 text-[5px]'>
-                                        Notes Present : {item.noteCount}</p>
-                                    <h1 className="text-lg font-semibold">{item.name}</h1>
-                                    <h2 className='text-xs text-slate-400'>{item.createdOn.slice(0, 10).split("-").reverse().join("-")}</h2>
+                                    <div className="flex flex-col items-center">
+                                        <FolderOpen size={80}
+                                            onClick={() => {
+                                                navigate(`/folder/${item._id}`)
+                                            }}
+                                        />
+                                        <p className='text-slate-400 text-[5px]'>
+                                            Notes Present : {item.noteCount}</p>
+                                        <h1 className="text-lg font-semibold">{item.name}</h1>
+                                        <h2 className='text-xs text-slate-400'>{item.createdOn.slice(0, 10).split("-").reverse().join("-")}</h2>
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
-                    </div>
+                            ))}
+                        </div>
+                    }
                 </div>
                 <AddBtn onClick={() => {
                     openModal()
