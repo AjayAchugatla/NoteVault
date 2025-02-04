@@ -11,6 +11,7 @@ import PasswordReset from './pages/PasswordReset.jsx'
 import { Analytics } from "@vercel/analytics/react"
 import Folder from './pages/Folder.jsx'
 import Trash from './pages/Trash.jsx'
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
 function App() {
   return (
@@ -18,14 +19,18 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path='/' element={<Landing />}></Route>
-          <Route path='/dashboard' element={<Home />}></Route>
-          <Route path='/folder/:id' element={<Folder />}></Route>
           <Route path='/signin' element={<Signin />}></Route>
           <Route path='/signup' element={<Signup />}></Route>
-          <Route path='/delete' element={<Delete />}></Route>
-          <Route path='/trash' element={<Trash />}></Route>
-          <Route path='/email-verify' element={<EmailVerify />}></Route>
           <Route path='/reset' element={<PasswordReset />}></Route>
+          <Route path='/dashboard' element={<Home />} />
+
+          <Route element={<ProtectedRoute />}>
+            <Route path='/folder/:id' element={<Folder />} />
+            <Route path='/delete' element={<Delete />} />
+            <Route path='/trash' element={<Trash />} />
+            <Route path='/email-verify' element={<EmailVerify />} />
+          </Route>
+
         </Routes >
         <Analytics />
       </BrowserRouter>

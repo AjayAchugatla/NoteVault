@@ -35,7 +35,7 @@ const Folder = () => {
     const [error, setError] = useState("")
     const [isUpdate, setIsUpdate] = useState(false)
     const [isView, setIsView] = useState(false)
-    const [req, setReq] = useState(false)
+    const [disabled, setDisabled] = useState(false)
 
     const { id } = useParams()
 
@@ -80,7 +80,6 @@ const Folder = () => {
     }
 
     const getAllNotes = async () => {
-        setLoading(true)
         try {
             const resp = await axios.get(import.meta.env.VITE_BASE_URL + "/note/getNotes/" + id, {
                 headers: {
@@ -93,6 +92,7 @@ const Folder = () => {
             }
         } catch (error) {
             console.log("An unexpected error occurred. Please try again.");
+            setLoading(false)
         }
     }
 
@@ -150,7 +150,7 @@ const Folder = () => {
     }
 
     const addNewNote = async () => {
-        setReq(true)
+        setDisabled(true)
         try {
             const resp = await axios.post(import.meta.env.VITE_BASE_URL + '/note/', {
                 title,
@@ -164,25 +164,24 @@ const Folder = () => {
             })
             if (resp.data.message) {
                 toast.success('Note added successfully')
-                setTimeout(() => {
-                    closeModal()
-                    getAllNotes()
-                }, 2000);
+                closeModal()
+                getAllNotes()
             } else {
                 setError(resp.data.error)
                 navigate('/dashboard')
             }
-            setReq(false)
         } catch (error) {
             toast.error('Internal Server Error')
             setTimeout(() => {
                 navigate('/dashboard')
             }, 2000);
-            setReq(false)
+        } finally {
+            setDisabled(false)
         }
     }
 
     const editNote = async () => {
+        setDisabled(true)
         try {
             const resp = await axios.put(import.meta.env.VITE_BASE_URL + '/note/' + noteId, {
                 title: title,
@@ -195,16 +194,16 @@ const Folder = () => {
             })
             if (resp.data.message) {
                 toast.info('Note Edited successfully')
-                setIsUpdate(false)
-                setTimeout(() => {
-                    closeModal()
-                    getAllNotes()
-                }, 2000)
+                closeModal()
+                getAllNotes()
             } else {
                 setError(resp.data.error)
             }
         } catch (error) {
             setError("Internal Server Error")
+        } finally {
+            setIsUpdate(false)
+            setDisabled(false)
         }
     }
 
@@ -223,31 +222,10 @@ const Folder = () => {
         }
     }
 
-    const getUser = async () => {
-        setLoading(true)
-        const token = localStorage.getItem("token");
-        if (token) {
-            const response = await axios.get(import.meta.env.VITE_BASE_URL + "/user/get-user", {
-                headers: {
-                    Authorization: "Bearer " + token
-                }
-            })
-
-            if (!response.data._id) {
-                navigate('/signin')
-            }
-            else if (!response.data.isAccountVerified) {
-                navigate('/email-verify')
-            }
-            setLoading(false)
-        } else {
-            navigate('/signin')
-        }
-    }
 
     useEffect(() => {
+        setLoading(true)
         getAllNotes()
-        getUser()
     }, [])
 
     return (
@@ -257,9 +235,9 @@ const Folder = () => {
                 <Toast />
                 <Navbar display={true} getSearchNotes={getSearchNotes} clearSearch={clearSearch} />
                 {notFound ? <NoData /> :
-                    <div className="mr-7 mb-8 ">
+                    <div className="sm:mr-28 mr-7 sm:pb-10 pb-24 ">
                         {allNotes.length > 0 ?
-                            <div className='grid grid-cols-1 gap-2 mt-8 lg:grid-cols-4 '>
+                            <div className='grid grid-cols-1 gap-2 mt-8 lg:grid-cols-3'>
                                 {allNotes.map((item) => (
                                     <NoteCard
                                         key={item._id}
@@ -329,9 +307,9 @@ const Folder = () => {
                             <Error error={error} />
                             <button className={`btn-primary font-medium  my-2
                             ${isView ? 'hidden' : 'block'}
-                            ${req ? 'cursor-not-allowed' : 'cursor-pointer'}
+                            ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}
                             `}
-                                disabled={req}
+                                disabled={disabled}
                                 onClick={() => {
                                     if (isUpdate) {
                                         handleEditNote()
@@ -340,7 +318,7 @@ const Folder = () => {
                                     }
                                 }}
                             >
-                                {req ? <Spinner /> : isUpdate ? 'Update' : 'ADD'}
+                                {disabled ? <Spinner /> : isUpdate ? 'Update' : 'ADD'}
                             </button>
                         </div>
                     </div>

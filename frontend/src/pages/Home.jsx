@@ -35,7 +35,6 @@ function Home() {
         setIsOpen(false);
     }
 
-
     const getUser = async () => {
         setLoading(true)
         const token = localStorage.getItem("token");
@@ -45,7 +44,6 @@ function Home() {
                     Authorization: "Bearer " + token
                 }
             })
-
             if (!response.data._id) {
                 navigate('/signin')
             }
@@ -69,10 +67,8 @@ function Home() {
             setError('Folder name should be less than 20 characters')
             return
         }
-
         setError('')
         try {
-            // setLoading(true)
             const resp = await axios.post(import.meta.env.VITE_BASE_URL + "/folder/create", {
                 name: folder
             }, {
@@ -80,26 +76,20 @@ function Home() {
                     Authorization: "Bearer " + localStorage.getItem("token")
                 }
             })
-            console.log(resp);
-
             if (resp.data.message) {
                 toast.success('Folder created successfully')
                 closeModal()
                 setFolder('')
                 getFolders()
             }
-            // setLoading(false)
         }
         catch (error) {
             console.log(error);
             setError('An unexpected error occurred. Please try again.')
-            // setLoading(false)
         }
-
     }
 
     const getFolders = async () => {
-        // setLoading(true);
         try {
             const resp = await axios.get(import.meta.env.VITE_BASE_URL + "/folder/", {
                 headers: {
@@ -107,9 +97,7 @@ function Home() {
                 }
             })
             setFolders(resp.data)
-            // setLoading(false);
         } catch (error) {
-            // setLoading(false);
             console.log(error);
         }
     }
@@ -131,7 +119,6 @@ function Home() {
         } catch (error) {
             console.log(error);
             toast.error('Internal Server Error')
-
         }
     }
 
@@ -144,17 +131,15 @@ function Home() {
     return (
         loading
             ? <div className={`dark:bg-[#202020]`}><Loader /></div>
-            : <div className={` dark:bg-[#202020] h-screen`}>
+            : <div className={` dark:bg-[#202020] h-full`}>
                 <Toast />
                 <Navbar display={false} />
                 <div >
                     {folders.length === 0 ? <Empty />
                         :
-                        <div className="grid grid-cols-2 gap-5 mt-8 lg:grid-cols-5 ml-2">
+                        <div className="grid grid-cols-1 gap-5 mt-8 lg:grid-cols-4 mx-6 sm:mr-24 sm:pb-28 pb-24">
                             {folders.map((item, index) => (
-                                <div key={index} className="bg-white p-4 rounded-md  dark:bg-[#4b4a4a] dark:text-white cursor-pointer
-                            hover:shadow-lg transition duration-300 ease-in-out
-                            relative
+                                <div key={index} className="bg-white p-4 rounded-md  dark:bg-[#4b4a4a] dark:text-white cursor-pointer hover:shadow-lg transition duration-300 ease-in-out relative
                             ">
                                     <Trash2 className='absolute right-5 hover:text-red-500'
                                         onClick={() => {
@@ -167,7 +152,7 @@ function Home() {
                                                 navigate(`/folder/${item._id}`)
                                             }}
                                         />
-                                        <p className='text-slate-400 text-[5px]'>
+                                        <p className='text-slate-400 text-sm'>
                                             Notes Present : {item.noteCount}</p>
                                         <h1 className="text-lg font-semibold">{item.name}</h1>
                                         <h2 className='text-xs text-slate-400'>{item.createdOn.slice(0, 10).split("-").reverse().join("-")}</h2>

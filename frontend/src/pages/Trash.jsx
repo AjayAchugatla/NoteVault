@@ -11,7 +11,6 @@ const Trash = () => {
     const [loading, setLoading] = useState(false)
 
     const getTrashNotes = async () => {
-        setLoading(true);
         try {
             const resp = await axios.get(import.meta.env.VITE_BASE_URL + '/note/trash', {
                 headers: {
@@ -22,8 +21,6 @@ const Trash = () => {
                 toast.error(resp.data.error)
             } else
                 setNotes(resp.data)
-            console.log(resp.data);
-
             setLoading(false);
         } catch (error) {
             setLoading(false);
@@ -74,6 +71,7 @@ const Trash = () => {
     }
 
     useEffect(() => {
+        setLoading(true);
         getTrashNotes()
     }, [])
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import Error from '../components/Error'
@@ -37,29 +37,9 @@ function Delete() {
 
     }
 
-    const verify = async () => {
-        const token = localStorage.getItem("token");
-        if (token) {
-            const response = await axios.get(import.meta.env.VITE_BASE_URL + "/user/get-user", {
-                headers: {
-                    Authorization: "Bearer " + token
-                }
-            })
-            if (!response.data._id)
-                navigate('/signin')
-        } else {
-            navigate('/signin')
-        }
-    }
-
     const back = () => {
         navigate('/dashboard')
     }
-
-    useEffect(() => {
-        verify()
-    }, [])
-
 
     return (
         <>

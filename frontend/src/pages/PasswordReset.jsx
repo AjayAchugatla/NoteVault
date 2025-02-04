@@ -8,7 +8,6 @@ import OTP_Input from '../components/OTP_Input'
 import PwdInput from "../components/PwdInput"
 import { toast } from 'react-toastify';
 import Toast from '../components/Toast'
-import { useEffect } from 'react'
 
 const PasswordReset = () => {
 
@@ -43,28 +42,6 @@ const PasswordReset = () => {
         }
         setLoading(false)
     }
-
-    const isLogged = async () => {
-        setLoading(true)
-        const token = localStorage.getItem("token");
-        if (token) {
-            const response = await axios.get(import.meta.env.VITE_BASE_URL + "/user/get-user", {
-                headers: {
-                    Authorization: "Bearer " + token
-                }
-            })
-
-            if (response.data._id) {
-                setLoading(false)
-                navigate('/dashboard')
-            }
-        }
-        setLoading(false)
-    }
-
-    useEffect(() => {
-        isLogged()
-    }, [])
 
     return (
         loading ? <div className={` dark:bg-[#202020]`}><Loader /></div> :
