@@ -11,7 +11,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Loader from '../components/Loader';
 import Model from '../components/Modal';
 import Error from '../components/Error';
-import { FolderOpen } from 'lucide-react';
+import { FolderIcon } from 'lucide-react';
 import { Trash2 } from 'lucide-react';
 import { darkThemeAtom } from '../recoil/atoms/darkThemeAtom';
 import Empty from '../components/NoFolder';
@@ -131,7 +131,7 @@ function Home() {
     return (
         loading
             ? <div className={`dark:bg-[#202020]`}><Loader /></div>
-            : <div className={` dark:bg-[#202020] h-full`}>
+            : <div className={` dark:bg-[#202020] min-h-screen`}>
                 <Toast />
                 <Navbar display={false} />
                 <div >
@@ -146,11 +146,12 @@ function Home() {
                                             removeFolder(item._id);
                                         }}
                                     />
-                                    <div className="flex flex-col items-center">
-                                        <FolderOpen size={80}
-                                            onClick={() => {
-                                                navigate(`/folder/${item._id}`)
-                                            }}
+                                    <div className="flex flex-col items-center"
+                                        onClick={() => {
+                                            navigate(`/folder/${item._id}`)
+                                        }}>
+                                        <FolderIcon size={80}
+
                                         />
                                         <p className='text-slate-400 text-sm'>
                                             Notes Present : {item.noteCount}</p>

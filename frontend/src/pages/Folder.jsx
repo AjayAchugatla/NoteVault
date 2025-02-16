@@ -230,8 +230,8 @@ const Folder = () => {
 
     return (
         loading
-            ? <div className={`dark:bg-[#202020]`}><Loader /></div>
-            : <div className={` dark:bg-[#202020] h-screen`}>
+            ? <div className="min-h-screen dark:bg-[#202020]"><Loader /></div>
+            : <div className="min-h-screen dark:bg-[#202020]">
                 <Toast />
                 <Navbar display={true} getSearchNotes={getSearchNotes} clearSearch={clearSearch} />
                 {notFound ? <NoData /> :
@@ -282,7 +282,7 @@ const Folder = () => {
                                 <label className='input-label'>TITLE</label>
                                 <input
                                     type="text"
-                                    className={`text-lg text-slate-950 input-box  ${darkTheme && 'text-white'}`}
+                                    className={`text-sm text-slate-950 input-box  ${darkTheme && 'text-white'}`}
                                     onChange={(e) => setTitle(e.target.value)}
                                     value={title}
                                     readOnly={isView}

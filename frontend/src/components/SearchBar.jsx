@@ -8,7 +8,7 @@ function SearchBar({ getSearchNotes, clearSearch }) {
     const to = localStorage.getItem("token");
     const [search, setSearch] = useRecoilState(searchAtom)
     return (
-        <div className={`w-80 flex items-center px-4 bg-slate-100 rounded-md ${to ? '' : 'hidden'} sm:ml-20 dark:bg-black dark:border-2 dark: border-white dark:text-white`}>
+        <div className={`w-80 flex items-center px-4 bg-slate-100 rounded-md ${to ? '' : 'hidden'} sm:ml-10 dark:bg-black dark:border-2 dark: border-white dark:text-white`}>
             <input
                 type="text"
                 placeholder='Search notes'
