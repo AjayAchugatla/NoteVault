@@ -4,7 +4,8 @@ import { useNavigate } from 'react-router-dom'
 const Menu = () => {
     const onLogout = () => {
         if (token) {
-            localStorage.clear()
+            localStorage.removeItem("token")
+            localStorage.removeItem("userInfo")
             navigate("/signin")
         }
     }
